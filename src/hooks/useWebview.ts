@@ -1,6 +1,7 @@
-import { WebViewMessageEvent } from "react-native-webview";
+import { RefObject } from "react";
+import WebView, { WebViewMessageEvent } from "react-native-webview";
 
-export const useWebview = (webViewRef: React.MutableRefObject<null>) => {
+export const useWebview = (webViewRef: RefObject<WebView<{}>>) => {
   const sendMessageToWeb = (data: any) => {
     if (webViewRef.current) {
       // @ts-ignore

@@ -8,8 +8,10 @@ import { WEBVIEW_BASE_URL } from "constants/url";
 import { ErrorBoundary } from "components";
 import { SystemErrorScreen } from "screens";
 import SplashScreen from "react-native-splash-screen";
+import { usePushNotification } from "hooks";
 
 const App = () => {
+  usePushNotification();
   const [fontsLoaded] = useFonts({
     "Pretendard-Regular": require("./assets/fonts/Pretendard-Regular.ttf"),
     "Pretendard-Medium": require("./assets/fonts/Pretendard-Medium.ttf"),

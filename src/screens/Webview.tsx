@@ -51,8 +51,6 @@ export const Webview = ({ url, dataToWeb = {} }: WebViewContainerProps) => {
     return <NetworkErrorScreen onPress={reloadWebView} />;
   }
 
-  throw new Error("test");
-
   return (
     <WebViewNative
       ref={webViewRef}

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "174658533953",
+    "project_id": "soaf-4b9ff",
+    "storage_bucket": "soaf-4b9ff.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:174658533953:android:bba23f10baf19f58ea64c0",
+        "android_client_info": {
+          "package_name": "com.soaf"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASFKHTg-OdKbH0Ha22FAsFJUxmpb6XjLY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

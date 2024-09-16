@@ -12,7 +12,20 @@
           "package_name": "com.soaf"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "174658533953-1u3kjimgeesl9kosgtp29h95oqm6j93t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.soaf",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "174658533953-e5v5jaq8pf4lbt9iq7nb4leh8q6c132i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyASFKHTg-OdKbH0Ha22FAsFJUxmpb6XjLY"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "174658533953-e5v5jaq8pf4lbt9iq7nb4leh8q6c132i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

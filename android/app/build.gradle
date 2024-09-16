@@ -3,6 +3,7 @@ apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 apply plugin: "com.google.gms.google-services"
 
+
 def projectRoot = rootDir.getAbsoluteFile().getParentFile().getAbsolutePath()
 
 /**
@@ -192,3 +193,4 @@ apply from: new File(["node", "--print", "require.resolve('@react-native-communi
 applyNativeModulesAppBuildGradle(project)
 
 apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
+

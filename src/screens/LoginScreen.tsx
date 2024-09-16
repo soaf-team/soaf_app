@@ -1,4 +1,8 @@
 import * as KakaoLogin from "@react-native-seoul/kakao-login";
+import {
+  GoogleSignin,
+  GoogleSigninButton,
+} from "@react-native-google-signin/google-signin";
 import { Typo } from "components";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "constants/key";
 import { AuthContext } from "providers/AuthContextProvider";
@@ -11,6 +15,12 @@ import {
   View,
 } from "react-native";
 import { setAsyncStorage } from "utils";
+
+GoogleSignin.configure({
+  scopes: ["email"], // 요청할 권한
+  webClientId:
+    "174658533953-e5v5jaq8pf4lbt9iq7nb4leh8q6c132i.apps.googleusercontent.com", // Google 개발자 콘솔에서 얻은 웹 클라이언트 ID
+});
 
 export const LoginScreen = () => {
   return (
@@ -48,26 +58,37 @@ type OauthButtonProps = {
 const OauthButton = ({ oAuthType }: OauthButtonProps) => {
   const { setAccessToken } = useContext(AuthContext);
 
+  const kakaoLogin = async () => {
+    const response: KakaoLogin.KakaoOAuthToken = await KakaoLogin.login();
+    const accessToken = response.accessToken;
+    const refreshToken = response.refreshToken;
+    if (accessToken) {
+      setAsyncStorage(ACCESS_TOKEN, accessToken);
+      setAsyncStorage(REFRESH_TOKEN, refreshToken);
+      setAccessToken(accessToken);
+    }
+  };
+
+  const googleLogin = async () => {
+    await GoogleSignin.hasPlayServices();
+    const response = await GoogleSignin.signIn();
+    const accessToken = response.data?.idToken;
+    if (accessToken) {
+      setAsyncStorage(ACCESS_TOKEN, accessToken);
+      setAccessToken(accessToken);
+    }
+  };
+
   const onPress = async () => {
     switch (oAuthType) {
       case "kakao":
-        const response: KakaoLogin.KakaoOAuthToken = await KakaoLogin.login();
-        const accessToken = response.accessToken;
-        const refreshToken = response.refreshToken;
-        if (accessToken) {
-          setAsyncStorage(ACCESS_TOKEN, accessToken);
-          setAsyncStorage(REFRESH_TOKEN, refreshToken);
-          setAccessToken(accessToken);
-
-          console.log("accessToken", accessToken);
-        }
-
+        kakaoLogin();
         break;
       case "apple":
         // 애플 로그인
         break;
       case "google":
-        // 구글 로그인
+        googleLogin();
         break;
       case "naver":
         // 네이버 로그인

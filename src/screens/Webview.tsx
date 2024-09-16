@@ -63,6 +63,7 @@ export const Webview = ({ url, dataToWeb = {} }: WebViewContainerProps) => {
       onError={handleLoadError}
       onNavigationStateChange={onNavigationStateChange}
       bounces={false}
+      overScrollMode="never"
     />
   );
 };

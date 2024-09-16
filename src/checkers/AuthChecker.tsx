@@ -1,5 +1,5 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useEffect, useState } from "react";
+import { AuthContext } from "providers/AuthContextProvider";
+import { useContext } from "react";
 import SplashScreen from "react-native-splash-screen";
 import { LoginScreen } from "screens/LoginScreen";
 
@@ -8,18 +8,11 @@ type Props = {
 };
 
 export const AuthChecker = ({ children }: Props) => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(false);
+  const { accessToken } = useContext(AuthContext);
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      const token = await AsyncStorage.getItem("accessToken");
-      setIsLoggedIn(!!token);
-    };
+  console.log("accessToken", accessToken);
 
-    checkAuth();
-  }, []);
-
-  if (!isLoggedIn) {
+  if (!accessToken) {
     SplashScreen.hide();
     return <LoginScreen />;
   }

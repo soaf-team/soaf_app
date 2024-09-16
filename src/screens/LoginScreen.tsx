@@ -1,5 +1,8 @@
+import * as KakaoLogin from "@react-native-seoul/kakao-login";
 import { Typo } from "components";
-import React from "react";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "constants/key";
+import { AuthContext } from "providers/AuthContextProvider";
+import React, { useContext } from "react";
 import {
   Image,
   Platform,
@@ -7,6 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { setAsyncStorage } from "utils";
 
 export const LoginScreen = () => {
   return (
@@ -42,10 +46,22 @@ type OauthButtonProps = {
 };
 
 const OauthButton = ({ oAuthType }: OauthButtonProps) => {
-  const onPress = () => {
+  const { setAccessToken } = useContext(AuthContext);
+
+  const onPress = async () => {
     switch (oAuthType) {
       case "kakao":
-        // 카카오 로그인
+        const response: KakaoLogin.KakaoOAuthToken = await KakaoLogin.login();
+        const accessToken = response.accessToken;
+        const refreshToken = response.refreshToken;
+        if (accessToken) {
+          setAsyncStorage(ACCESS_TOKEN, accessToken);
+          setAsyncStorage(REFRESH_TOKEN, refreshToken);
+          setAccessToken(accessToken);
+
+          console.log("accessToken", accessToken);
+        }
+
         break;
       case "apple":
         // 애플 로그인

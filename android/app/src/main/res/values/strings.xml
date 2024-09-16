@@ -2,4 +2,5 @@
   <string name="app_name">소프</string>
   <string name="expo_splash_screen_resize_mode" translatable="false">contain</string>
   <string name="expo_splash_screen_status_bar_translucent" translatable="false">false</string>
+  <string name="kakao_app_key">d0f0f4e788239001c01f8f7c92b692ce</string>
 </resources>

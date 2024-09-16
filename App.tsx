@@ -2,13 +2,14 @@ import { ProviderGroup } from "providers";
 import { NavigationContainer } from "@react-navigation/native";
 import { CheckerGroup } from "checkers";
 import { StatusBar } from "react-native";
-import { Webview } from "screens/Webview";
 import { useFonts } from "expo-font";
-import { WEBVIEW_BASE_URL } from "constants/url";
-import { ErrorBoundary } from "components";
+import { Button, ErrorBoundary } from "components";
 import { SystemErrorScreen } from "screens";
 import SplashScreen from "react-native-splash-screen";
 import { usePushNotification } from "hooks";
+
+import { useContext, useEffect } from "react";
+import { AuthContext } from "providers/AuthContextProvider";
 
 const App = () => {
   usePushNotification();
@@ -34,7 +35,8 @@ const App = () => {
         <ProviderGroup>
           <StatusBar barStyle="dark-content" backgroundColor="#fff" />
           <CheckerGroup>
-            <Webview url={WEBVIEW_BASE_URL} />
+            <Logout />
+            {/* <Webview url={WEBVIEW_BASE_URL} /> */}
           </CheckerGroup>
         </ProviderGroup>
       </NavigationContainer>
@@ -43,3 +45,13 @@ const App = () => {
 };
 
 export default App;
+
+const Logout = () => {
+  const { logout } = useContext(AuthContext);
+
+  useEffect(() => {
+    SplashScreen.hide();
+  }, []);
+
+  return <Button onPress={logout} title="로그아웃" />;
+};

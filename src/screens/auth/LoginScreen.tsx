@@ -7,6 +7,8 @@ import React, { useContext, useState } from "react";
 import { Image, Platform, StyleSheet, View } from "react-native";
 import { setAsyncStorage } from "utils";
 import NaverLogin from "@react-native-seoul/naver-login";
+import { getUserInfo } from "apis";
+import { useNavigation } from "@react-navigation/native";
 
 GoogleSignin.configure({
   scopes: ["email"], // 요청할 권한
@@ -25,55 +27,65 @@ NaverLogin.initialize({
 type OauthType = "kakao" | "apple" | "google" | "naver";
 
 export const LoginScreen = () => {
-  const { setAccessToken } = useContext(AuthContext);
+  const navigation = useNavigation();
+  const { setIsValidUser } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(false);
 
   const kakaoLogin = async () => {
     const response: KakaoLogin.KakaoOAuthToken = await KakaoLogin.login();
     const accessToken = response.accessToken;
     const refreshToken = response.refreshToken;
-    if (accessToken) {
-      setAsyncStorage(ACCESS_TOKEN, accessToken);
-      setAsyncStorage(REFRESH_TOKEN, refreshToken);
-      setAccessToken(accessToken);
-    }
+    return { accessToken, refreshToken };
   };
 
   const googleLogin = async () => {
     await GoogleSignin.hasPlayServices();
     const response = await GoogleSignin.signIn();
-    const accessToken = response.data?.idToken;
-    if (accessToken) {
-      setAsyncStorage(ACCESS_TOKEN, accessToken);
-      setAccessToken(accessToken);
-    }
+    const accessToken = response.data?.idToken ?? null;
+    return { accessToken };
   };
 
   const naverLogin = async () => {
     const { successResponse } = await NaverLogin.login();
-    const accessToken = successResponse?.accessToken;
-    if (accessToken) {
-      setAsyncStorage(ACCESS_TOKEN, accessToken);
-      setAccessToken(accessToken);
-    }
+    const accessToken = successResponse?.accessToken ?? null;
+    return { accessToken };
   };
 
   const onPress = async (oAuthType: OauthType) => {
     setIsLoading(true);
+    let accessToken: string | null = null;
+
     switch (oAuthType) {
       case "kakao":
-        await kakaoLogin();
+        const { accessToken: kakaoAccessToken } = await kakaoLogin();
+        accessToken = kakaoAccessToken;
         break;
       case "apple":
         // 애플 로그인
         break;
       case "google":
-        await googleLogin();
+        const { accessToken: googleAccessToken } = await googleLogin();
+        accessToken = googleAccessToken;
         break;
       case "naver":
-        await naverLogin();
+        const { accessToken: naverAccessToken } = await naverLogin();
+        accessToken = naverAccessToken;
         break;
     }
+
+    if (accessToken) {
+      setAsyncStorage(ACCESS_TOKEN, accessToken);
+
+      const userInfo = await getUserInfo();
+      if (!userInfo) {
+        navigation.navigate("AgreementScreen" as never);
+        setIsLoading(false);
+        return;
+      }
+
+      setIsValidUser(true);
+    }
+
     setIsLoading(false);
   };
 
@@ -82,7 +94,7 @@ export const LoginScreen = () => {
       <View style={styles.topContent} />
       <View style={styles.centerContent}>
         <Image
-          source={require("../../assets/images/emotion-group.png")}
+          source={require("assets/images/emotion-group.png")}
           style={styles.image}
         />
         <Typo
@@ -156,6 +168,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-between",
     alignItems: "center",
+    backgroundColor: "white",
   },
   topContent: {
     width: "100%",
@@ -203,28 +216,28 @@ const styles = StyleSheet.create({
 const OAUTH_TYPE = {
   kakao: {
     text: "카카오로 시작하기",
-    icon: require("../../assets/images/kakao.png"),
+    icon: require("assets/images/kakao.png"),
     backgroundColor: "#FEE500",
     borderColor: "#FEE500",
     color: "#121212",
   },
   apple: {
     text: "애플로 시작하기",
-    icon: require("../../assets/images/apple.png"),
+    icon: require("assets/images/apple.png"),
     backgroundColor: "#000000",
     borderColor: "#000000",
     color: "#FFFFFF",
   },
   google: {
     text: "구글로 시작하기",
-    icon: require("../../assets/images/google.png"),
+    icon: require("assets/images/google.png"),
     backgroundColor: "#FFFFFF",
     borderColor: "#8A91AB20",
     color: "#121212",
   },
   naver: {
     text: "네이버로 시작하기",
-    icon: require("../../assets/images/naver.png"),
+    icon: require("assets/images/naver.png"),
     backgroundColor: "#03C75A",
     borderColor: "#03C75A",
     color: "#FFFFFF",

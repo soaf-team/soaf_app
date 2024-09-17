@@ -4,7 +4,7 @@ import { TouchableRipple, TouchableRippleProps } from "react-native-paper";
 
 type RippleButtonProps = {
   children: React.ReactNode;
-  style: any;
+  style?: any;
   onPress: () => void;
   rippleColor?: string;
   pressedScale?: number;
@@ -14,7 +14,7 @@ export const RippleButton = ({
   children,
   style,
   onPress,
-  rippleColor = "rgba(0, 0, 0, 0.12)",
+  rippleColor = "rgba(0, 0, 0, 0.1)",
   pressedScale = 0.97,
   ...props
 }: RippleButtonProps) => {
@@ -57,6 +57,9 @@ export const RippleButton = ({
 const styles = StyleSheet.create({
   container: {
     overflow: "hidden",
+    borderRadius: 16,
+    width: "100%",
+    height: 52,
   },
   ripple: {
     flex: 1,

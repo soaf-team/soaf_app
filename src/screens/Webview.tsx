@@ -18,7 +18,7 @@ export const Webview = ({ url, dataToWeb = {} }: WebViewContainerProps) => {
   const webViewRef = useRef<WebViewNative>(null);
 
   const { requestOnMessage, sendMessageToWeb } = useWebview(webViewRef);
-  const { setCurrentUrl } = useWebviewBackHandler({ webViewRef, mainUrl: url });
+  const { setCurrentUrl } = useWebviewBackHandler(webViewRef);
 
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);

@@ -2,14 +2,10 @@ import { useCallback, useRef, useState } from "react";
 import { BackHandler, Platform, ToastAndroid } from "react-native";
 import WebView from "react-native-webview";
 import { useBackHandler } from "./useBackHandler";
+import { WEBVIEW_BASE_URL } from "constants/url";
 
-type Props = {
-  webViewRef: React.RefObject<WebView>;
-  mainUrl: string;
-};
-
-export const useWebviewBackHandler = ({ webViewRef, mainUrl }: Props) => {
-  const [currentUrl, setCurrentUrl] = useState(mainUrl);
+export const useWebviewBackHandler = (webViewRef: React.RefObject<WebView>) => {
+  const [currentUrl, setCurrentUrl] = useState(WEBVIEW_BASE_URL);
 
   const exitAppRef = useRef<boolean>(false);
   const exitTimerRef = useRef<number | null>(null);
@@ -17,7 +13,24 @@ export const useWebviewBackHandler = ({ webViewRef, mainUrl }: Props) => {
   const onBackPress = () => {
     if (!webViewRef.current) return false;
 
-    if (currentUrl === mainUrl) {
+    const pathname = new URL(currentUrl).pathname;
+
+    console.log(pathname);
+
+    if (
+      ["/diary/stats/", "/explore/", "/chat/main/", "/myHome/main"].includes(
+        pathname
+      )
+    ) {
+      webViewRef.current.postMessage(
+        JSON.stringify({
+          type: "navigateToMain",
+        })
+      );
+      return true;
+    }
+
+    if (pathname === "/diary/calendar/") {
       handleExitApp();
       return true;
     }

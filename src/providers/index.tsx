@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { SafeAreaProvider } from "./SafeAreaProvider";
 import { AuthContextProvider } from "./AuthContextProvider";
+import { NavigationProvider } from "./NavigationProvider";
 
 type Props = {
   children: ReactNode;
@@ -8,8 +9,10 @@ type Props = {
 
 export const ProviderGroup = ({ children }: Props) => {
   return (
-    <AuthContextProvider>
-      <SafeAreaProvider>{children}</SafeAreaProvider>
-    </AuthContextProvider>
+    <NavigationProvider>
+      <AuthContextProvider>
+        <SafeAreaProvider>{children}</SafeAreaProvider>
+      </AuthContextProvider>
+    </NavigationProvider>
   );
 };

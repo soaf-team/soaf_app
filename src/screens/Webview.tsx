@@ -7,7 +7,7 @@ import SplashScreen from "react-native-splash-screen";
 
 import { useWebviewBackHandler, useWebview } from "hooks";
 
-import { NetworkErrorScreen } from "./NetworkErrorScreen";
+import { NetworkErrorScreen } from "./fallbacks";
 
 type WebViewContainerProps = {
   url: string;
@@ -20,10 +20,18 @@ export const Webview = ({ url, dataToWeb = {} }: WebViewContainerProps) => {
   const { requestOnMessage, sendMessageToWeb } = useWebview(webViewRef);
   const { setCurrentUrl } = useWebviewBackHandler({ webViewRef, mainUrl: url });
 
+  const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
 
   const handleLoadError = () => {
     setLoadError(true);
+  };
+
+  const handleOnLoad = (event: any) => {
+    console.log("handleOnLoad", event);
+
+    setIsLoading(false);
+    sendMessageToWeb(dataToWeb);
   };
 
   const onNavigationStateChange = (navState: WebViewNavigation) => {
@@ -57,9 +65,7 @@ export const Webview = ({ url, dataToWeb = {} }: WebViewContainerProps) => {
       originWhitelist={["*"]}
       source={{ uri: url }}
       onMessage={requestOnMessage}
-      onLoad={() => {
-        sendMessageToWeb(dataToWeb);
-      }}
+      onLoad={handleOnLoad}
       onError={handleLoadError}
       onNavigationStateChange={onNavigationStateChange}
       bounces={false}

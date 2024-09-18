@@ -3,6 +3,7 @@ import { Animated, StyleSheet } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import { Typo } from "./Typo";
 import { TouchableRipple } from "react-native-paper";
+import { LoadingDots } from "./LoadingDots";
 
 type Props = {
   onPress: () => void;
@@ -10,6 +11,7 @@ type Props = {
   rippleColor?: string;
   pressedScale?: number;
   disabled?: boolean;
+  isLoading?: boolean;
 };
 
 export const PrimaryButton = ({
@@ -18,6 +20,7 @@ export const PrimaryButton = ({
   rippleColor = "rgba(0, 0, 0, 0.1)",
   pressedScale = 0.97,
   disabled = false,
+  isLoading = false,
 }: Props) => {
   const scaleValue = React.useRef(new Animated.Value(1)).current;
 
@@ -55,9 +58,13 @@ export const PrimaryButton = ({
           style={styles.ripple}
           disabled={disabled}
         >
-          <Typo size={18} weight="bold" color="white">
-            {title}
-          </Typo>
+          {!disabled && isLoading ? (
+            <LoadingDots />
+          ) : (
+            <Typo size={18} weight="bold" color="white">
+              {title}
+            </Typo>
+          )}
         </TouchableRipple>
       </LinearGradient>
     </Animated.View>

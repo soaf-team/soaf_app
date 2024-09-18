@@ -8,16 +8,17 @@ import SplashScreen from "react-native-splash-screen";
 import { useWebviewBackHandler, useWebview } from "hooks";
 
 import { NetworkErrorScreen } from "./fallbacks";
+import { getAsyncStorage } from "utils";
+import { ACCESS_TOKEN } from "constants/key";
 
 type WebViewContainerProps = {
   url: string;
-  dataToWeb?: any;
 };
 
-export const Webview = ({ url, dataToWeb = {} }: WebViewContainerProps) => {
+export const Webview = ({ url }: WebViewContainerProps) => {
   const webViewRef = useRef<WebViewNative>(null);
 
-  const { requestOnMessage, sendMessageToWeb } = useWebview(webViewRef);
+  const { getMessageFromWeb, sendMessageToWeb } = useWebview(webViewRef);
   const { setCurrentUrl } = useWebviewBackHandler(webViewRef);
 
   const [isLoading, setIsLoading] = useState(true);
@@ -27,11 +28,11 @@ export const Webview = ({ url, dataToWeb = {} }: WebViewContainerProps) => {
     setLoadError(true);
   };
 
-  const handleOnLoad = (event: any) => {
-    console.log("handleOnLoad", event);
+  const handleOnLoad = async (event: any) => {
+    const accessToken = await getAsyncStorage(ACCESS_TOKEN);
 
+    sendMessageToWeb({ accessToken });
     setIsLoading(false);
-    sendMessageToWeb(dataToWeb);
   };
 
   const onNavigationStateChange = (navState: WebViewNavigation) => {
@@ -64,7 +65,7 @@ export const Webview = ({ url, dataToWeb = {} }: WebViewContainerProps) => {
       ref={webViewRef}
       originWhitelist={["*"]}
       source={{ uri: url }}
-      onMessage={requestOnMessage}
+      onMessage={getMessageFromWeb}
       onLoad={handleOnLoad}
       onError={handleLoadError}
       onNavigationStateChange={onNavigationStateChange}

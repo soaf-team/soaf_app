@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  FlatList,
-  ScrollView,
-  StyleProp,
-  StyleSheet,
-  View,
-  ViewStyle,
-} from "react-native";
+import { FlatList, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import Markdown from "react-native-markdown-display";
 
 type MarkdownRendererProps = {
@@ -57,10 +50,6 @@ const markdownStyles = StyleSheet.create({
   link: {
     color: "#0000FF",
     textDecorationLine: "underline",
-  },
-  list_item: {
-    flexDirection: "row",
-    alignItems: "flex-start",
   },
 });
 

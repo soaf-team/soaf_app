@@ -14,6 +14,7 @@ export const RegisterNicknameScreen = () => {
   const [nickname, setNickname] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleNicknameChange = (text: string) => {
     setNickname(text);
@@ -26,9 +27,16 @@ export const RegisterNicknameScreen = () => {
   };
 
   const handleSubmit = async () => {
+    setIsSubmitting(true);
     //닉네임 제출
-
-    setIsValidUser(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+      setIsValidUser(true);
+    }
   };
 
   return (
@@ -103,6 +111,7 @@ export const RegisterNicknameScreen = () => {
           title="완료"
           onPress={handleSubmit}
           disabled={nickname.length < 2}
+          isLoading={isSubmitting}
         />
       </View>
     </ScreenLayout>

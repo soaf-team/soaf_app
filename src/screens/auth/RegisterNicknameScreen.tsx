@@ -141,6 +141,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     width: "100%",
     borderBottomWidth: 2,
+    alignItems: "center",
   },
   bottomTextContainer: {
     flexDirection: "row",

@@ -7,7 +7,7 @@ import React, { useContext, useState } from "react";
 import { Image, Platform, StyleSheet, View } from "react-native";
 import { setAsyncStorage } from "utils";
 import NaverLogin from "@react-native-seoul/naver-login";
-import { getUserInfo } from "apis";
+import { getUserProfile } from "apis";
 import { useNavigation } from "@react-navigation/native";
 
 GoogleSignin.configure({
@@ -23,6 +23,37 @@ NaverLogin.initialize({
   // serviceUrlSchemeIOS: "com.soaf",
   // disableNaverAppAuthIOS: true,
 });
+
+const OAUTH_TYPE = {
+  kakao: {
+    text: "카카오로 시작하기",
+    icon: require("assets/images/kakao.png"),
+    backgroundColor: "#FEE500",
+    borderColor: "#FEE500",
+    color: "#121212",
+  },
+  apple: {
+    text: "애플로 시작하기",
+    icon: require("assets/images/apple.png"),
+    backgroundColor: "#000000",
+    borderColor: "#000000",
+    color: "#FFFFFF",
+  },
+  google: {
+    text: "구글로 시작하기",
+    icon: require("assets/images/google.png"),
+    backgroundColor: "#FFFFFF",
+    borderColor: "#8A91AB20",
+    color: "#121212",
+  },
+  naver: {
+    text: "네이버로 시작하기",
+    icon: require("assets/images/naver.png"),
+    backgroundColor: "#03C75A",
+    borderColor: "#03C75A",
+    color: "#FFFFFF",
+  },
+};
 
 type OauthType = "kakao" | "apple" | "google" | "naver";
 
@@ -55,38 +86,47 @@ export const LoginScreen = () => {
     setIsLoading(true);
     let accessToken: string | null = null;
 
-    switch (oAuthType) {
-      case "kakao":
-        const { accessToken: kakaoAccessToken } = await kakaoLogin();
-        accessToken = kakaoAccessToken;
-        break;
-      case "apple":
-        // 애플 로그인
-        break;
-      case "google":
-        const { accessToken: googleAccessToken } = await googleLogin();
-        accessToken = googleAccessToken;
-        break;
-      case "naver":
-        const { accessToken: naverAccessToken } = await naverLogin();
-        accessToken = naverAccessToken;
-        break;
-    }
+    try {
+      switch (oAuthType) {
+        case "kakao":
+          const { accessToken: kakaoAccessToken } = await kakaoLogin();
+          accessToken = kakaoAccessToken;
+          break;
+        case "apple":
+          // 애플 로그인
+          break;
+        case "google":
+          const { accessToken: googleAccessToken } = await googleLogin();
+          accessToken = googleAccessToken;
+          break;
+        case "naver":
+          const { accessToken: naverAccessToken } = await naverLogin();
+          accessToken = naverAccessToken;
+          break;
+      }
 
-    if (accessToken) {
-      setAsyncStorage(ACCESS_TOKEN, accessToken);
-
-      const userInfo = await getUserInfo();
-      if (!userInfo) {
-        navigation.navigate("AgreementScreen" as never);
+      if (!accessToken) {
         setIsLoading(false);
         return;
       }
 
-      setIsValidUser(true);
+      await setAsyncStorage(ACCESS_TOKEN, accessToken);
+      await checkUserNickname();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
     }
+  };
 
-    setIsLoading(false);
+  const checkUserNickname = async () => {
+    const userInfo = await getUserProfile();
+    if (!userInfo?.nickname) {
+      navigation.navigate("AgreementScreen" as never);
+      setIsLoading(false);
+      return;
+    }
+    setIsValidUser(true);
   };
 
   return (
@@ -212,34 +252,3 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
 });
-
-const OAUTH_TYPE = {
-  kakao: {
-    text: "카카오로 시작하기",
-    icon: require("assets/images/kakao.png"),
-    backgroundColor: "#FEE500",
-    borderColor: "#FEE500",
-    color: "#121212",
-  },
-  apple: {
-    text: "애플로 시작하기",
-    icon: require("assets/images/apple.png"),
-    backgroundColor: "#000000",
-    borderColor: "#000000",
-    color: "#FFFFFF",
-  },
-  google: {
-    text: "구글로 시작하기",
-    icon: require("assets/images/google.png"),
-    backgroundColor: "#FFFFFF",
-    borderColor: "#8A91AB20",
-    color: "#121212",
-  },
-  naver: {
-    text: "네이버로 시작하기",
-    icon: require("assets/images/naver.png"),
-    backgroundColor: "#03C75A",
-    borderColor: "#03C75A",
-    color: "#FFFFFF",
-  },
-};

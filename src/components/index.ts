@@ -7,3 +7,4 @@ export * from "./Header";
 export * from "./ScreenLayout";
 export * from "./MarkdownRenderer";
 export * from "./LoadingSpinner";
+export * from "./LoadingDots";

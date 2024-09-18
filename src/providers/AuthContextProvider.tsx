@@ -1,4 +1,4 @@
-import { getUserInfo } from "apis";
+import { getUserProfile } from "apis";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "constants/key";
 import React, { createContext, useEffect, useState } from "react";
 import { getAsyncStorage, removeAsyncStorage } from "utils";
@@ -29,8 +29,7 @@ export const AuthContextProvider = ({
   };
 
   const checkAuth = async () => {
-    const accessToken = await getAsyncStorage(ACCESS_TOKEN);
-    const userInfo = await getUserInfo();
+    const userInfo = await getUserProfile();
     setIsValidUser(!!userInfo);
   };
 

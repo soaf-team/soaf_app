@@ -49,8 +49,6 @@ const CodePushChecker = ({ children }: Props) => {
     }
   };
 
-  console.log(__DEV__);
-
   useEffect(() => {
     const init = async () => {
       if (__DEV__) {

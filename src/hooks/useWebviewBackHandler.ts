@@ -15,8 +15,6 @@ export const useWebviewBackHandler = (webViewRef: React.RefObject<WebView>) => {
 
     const pathname = new URL(currentUrl).pathname;
 
-    console.log(pathname);
-
     if (
       ["/diary/stats/", "/explore/", "/chat/main/", "/myHome/main"].includes(
         pathname

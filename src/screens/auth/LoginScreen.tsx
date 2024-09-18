@@ -113,7 +113,7 @@ export const LoginScreen = () => {
       await setAsyncStorage(ACCESS_TOKEN, accessToken);
       await checkUserNickname();
     } catch (error) {
-      console.log(error);
+      console.error(error);
     } finally {
       setIsLoading(false);
     }

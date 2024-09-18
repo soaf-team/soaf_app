@@ -15,7 +15,7 @@ const App = () => {
     <ErrorBoundary
       renderFallback={({ error, reset }) => {
         SplashScreen.hide();
-        console.log(error);
+        console.error(error);
         return <SystemErrorScreen onPress={reset} />;
       }}
     >

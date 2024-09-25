@@ -1,9 +1,12 @@
-import { ACCESS_TOKEN } from "constants/key";
-import { RefObject } from "react";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "constants/key";
+import { AuthContext } from "providers/AuthContextProvider";
+import { RefObject, useContext } from "react";
 import WebView, { WebViewMessageEvent } from "react-native-webview";
-import { getAsyncStorage } from "utils";
+import { setAsyncStorage } from "utils";
 
 export const useWebview = (webViewRef: RefObject<WebView<{}>>) => {
+  const { logout } = useContext(AuthContext);
+
   const sendMessageToWeb = (data: any) => {
     if (webViewRef.current) {
       // @ts-ignore
@@ -12,14 +15,30 @@ export const useWebview = (webViewRef: RefObject<WebView<{}>>) => {
   };
 
   const getMessageFromWeb = async (e: WebViewMessageEvent) => {
-    console.log(e.nativeEvent);
     const nativeEvent = JSON.parse(e.nativeEvent.data);
 
-    switch (nativeEvent.type) {
-      case "ON_READY":
-        const accessToken = await getAsyncStorage(ACCESS_TOKEN);
-        sendMessageToWeb({ accessToken });
-        console.log("sended");
+    const eventType = nativeEvent.type;
+
+    switch (eventType) {
+      case "LOG":
+        console.log("web :" + JSON.stringify(nativeEvent.data));
+        break;
+
+      case "REFRESH_TOKEN":
+        const { accessToken, refreshToken } = nativeEvent.data;
+        try {
+          Promise.all([
+            setAsyncStorage(ACCESS_TOKEN, accessToken),
+            setAsyncStorage(REFRESH_TOKEN, refreshToken),
+          ]);
+        } catch (error) {
+          console.log("error", error);
+        }
+        break;
+      case "LOGOUT":
+        logout();
+        break;
+      default:
         break;
     }
   };

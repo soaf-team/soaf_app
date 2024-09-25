@@ -1,14 +1,15 @@
 import * as KakaoLogin from "@react-native-seoul/kakao-login";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { RippleButton, Typo } from "components";
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "constants/key";
 import { AuthContext } from "providers/AuthContextProvider";
 import React, { useContext, useState } from "react";
 import { Image, Platform, StyleSheet, View } from "react-native";
-import { setAsyncStorage } from "utils";
 import NaverLogin from "@react-native-seoul/naver-login";
-import { getUserProfile } from "apis";
+import { login } from "apis";
 import { useNavigation } from "@react-navigation/native";
+import { StackNavigationType } from "types/navigation";
+import { setAsyncStorage } from "utils";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "constants/key";
 
 GoogleSignin.configure({
   scopes: ["email"], // 요청할 권한
@@ -58,75 +59,103 @@ const OAUTH_TYPE = {
 type OauthType = "kakao" | "apple" | "google" | "naver";
 
 export const LoginScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationType>();
   const { setIsValidUser } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(false);
 
   const kakaoLogin = async () => {
-    const response: KakaoLogin.KakaoOAuthToken = await KakaoLogin.login();
-    const accessToken = response.accessToken;
-    const refreshToken = response.refreshToken;
-    return { accessToken, refreshToken };
+    const [token, profile] = await Promise.all([
+      KakaoLogin.login(),
+      KakaoLogin.getProfile(),
+    ]);
+    const accessToken = token.accessToken;
+    const refreshToken = token.refreshToken;
+    const email = profile.email;
+
+    return { accessToken, refreshToken, email };
   };
 
   const googleLogin = async () => {
     await GoogleSignin.hasPlayServices();
     const response = await GoogleSignin.signIn();
     const accessToken = response.data?.idToken ?? null;
-    return { accessToken };
+    const email = response.data?.user.email ?? null;
+
+    return { accessToken, email };
   };
 
   const naverLogin = async () => {
     const { successResponse } = await NaverLogin.login();
-    const accessToken = successResponse?.accessToken ?? null;
-    return { accessToken };
+    const accessToken = successResponse?.accessToken;
+
+    if (!accessToken) return { accessToken: null, email: null };
+
+    const { response } = await NaverLogin.getProfile(accessToken);
+    const email = response?.email ?? null;
+
+    return { accessToken, email };
   };
 
   const onPress = async (oAuthType: OauthType) => {
     setIsLoading(true);
-    let accessToken: string | null = null;
+    let oAuthToken: string | null = null;
+    let email: string | null = null;
 
     try {
       switch (oAuthType) {
         case "kakao":
-          const { accessToken: kakaoAccessToken } = await kakaoLogin();
-          accessToken = kakaoAccessToken;
+          const { accessToken: kakaoAccessToken, email: kakaoEmail } =
+            await kakaoLogin();
+          oAuthToken = kakaoAccessToken;
+          email = kakaoEmail;
           break;
         case "apple":
           // 애플 로그인
           break;
         case "google":
-          const { accessToken: googleAccessToken } = await googleLogin();
-          accessToken = googleAccessToken;
+          const { accessToken: googleAccessToken, email: googleEmail } =
+            await googleLogin();
+          oAuthToken = googleAccessToken;
+          email = googleEmail;
           break;
         case "naver":
-          const { accessToken: naverAccessToken } = await naverLogin();
-          accessToken = naverAccessToken;
+          const { accessToken: naverAccessToken, email: naverEmail } =
+            await naverLogin();
+          oAuthToken = naverAccessToken;
+          email = naverEmail;
           break;
       }
 
-      if (!accessToken) {
+      if (!oAuthToken || !email) {
         setIsLoading(false);
-        return;
+        throw new Error("로그인에 실패했습니다.");
       }
 
-      await setAsyncStorage(ACCESS_TOKEN, accessToken);
-      await checkUserNickname();
+      const { isFirstLogin, accessToken, refreshToken } = await login({
+        oAuthToken,
+        email,
+        oAuthType,
+      });
+
+      if (isFirstLogin) {
+        navigation.navigate("AgreementScreen", {
+          accessToken,
+          refreshToken,
+        });
+        setIsLoading(false);
+        return;
+      } else {
+        await Promise.all([
+          setAsyncStorage(ACCESS_TOKEN, accessToken),
+          setAsyncStorage(REFRESH_TOKEN, refreshToken),
+        ]);
+        setIsValidUser(true);
+      }
     } catch (error) {
       console.error(error);
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const checkUserNickname = async () => {
-    const userInfo = await getUserProfile();
-    if (!userInfo?.nickname) {
-      navigation.navigate("AgreementScreen" as never);
-      setIsLoading(false);
-      return;
-    }
-    setIsValidUser(true);
   };
 
   return (

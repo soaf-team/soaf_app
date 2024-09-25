@@ -2,9 +2,22 @@ import { useNavigation } from "@react-navigation/native";
 import { PrimaryButton, ScreenLayout, Typo } from "components";
 import { useState } from "react";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import { StackNavigationType } from "types/navigation";
 
-export const AgreementScreen = () => {
-  const navigation = useNavigation();
+type AgreementScreenProps = {
+  navigation: StackNavigationType;
+  route: {
+    params: {
+      accessToken: string;
+      refreshToken: string;
+    };
+  };
+};
+
+export const AgreementScreen = ({
+  navigation,
+  route,
+}: AgreementScreenProps) => {
   const [checkedIndexes, setCheckedIndexes] = useState<number[]>([]);
 
   function containsNumbers(arr: number[]) {
@@ -101,7 +114,10 @@ export const AgreementScreen = () => {
         <PrimaryButton
           title="동의하기"
           onPress={() => {
-            navigation.navigate("RegisterNicknameScreen" as never);
+            navigation.navigate("RegisterNicknameScreen", {
+              accessToken: route.params.accessToken,
+              refreshToken: route.params.refreshToken,
+            });
           }}
           disabled={!isButtonActive}
         />

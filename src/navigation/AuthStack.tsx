@@ -14,8 +14,9 @@ import {
   TermsOfUseAgreementScreen,
 } from "screens/agreements";
 import { LoginScreen, RegisterNicknameScreen } from "screens/auth";
+import { RootStackParamList } from "types/navigation";
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<RootStackParamList>();
 
 const defaultScreenOptions: StackNavigationOptions = {
   headerShown: false,

@@ -1,15 +1,15 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import {
   WebView as WebViewNative,
   WebViewNavigation,
 } from "react-native-webview";
 import SplashScreen from "react-native-splash-screen";
 
-import { useWebviewBackHandler, useWebview } from "hooks";
+import { useWebviewBackHandler, useWebview, useDebounce } from "hooks";
 
 import { NetworkErrorScreen } from "./fallbacks";
 import { getAsyncStorage } from "utils";
-import { ACCESS_TOKEN } from "constants/key";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "constants/key";
 
 type WebViewContainerProps = {
   url: string;
@@ -21,19 +21,26 @@ export const Webview = ({ url }: WebViewContainerProps) => {
   const { getMessageFromWeb, sendMessageToWeb } = useWebview(webViewRef);
   const { setCurrentUrl } = useWebviewBackHandler(webViewRef);
 
-  const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
 
   const handleLoadError = () => {
     setLoadError(true);
   };
 
-  const handleOnLoad = async (event: any) => {
-    const accessToken = await getAsyncStorage(ACCESS_TOKEN);
+  const debouncedHandleOnLoad = useDebounce(async (event: any) => {
+    try {
+      const [accessToken, refreshToken] = await Promise.all([
+        getAsyncStorage(ACCESS_TOKEN),
+        getAsyncStorage(REFRESH_TOKEN),
+      ]);
 
-    sendMessageToWeb({ accessToken });
-    setIsLoading(false);
-  };
+      sendMessageToWeb({ accessToken, refreshToken });
+    } catch (error) {
+      console.error("error", error);
+    } finally {
+      SplashScreen.hide();
+    }
+  }, 500);
 
   const onNavigationStateChange = (navState: WebViewNavigation) => {
     setCurrentUrl(navState.url);
@@ -50,13 +57,8 @@ export const Webview = ({ url }: WebViewContainerProps) => {
     setLoadError(false);
   }, []);
 
-  useEffect(() => {
-    setTimeout(() => {
-      SplashScreen.hide();
-    }, 500);
-  }, []);
-
   if (loadError) {
+    SplashScreen.hide();
     return <NetworkErrorScreen onPress={reloadWebView} />;
   }
 
@@ -66,11 +68,21 @@ export const Webview = ({ url }: WebViewContainerProps) => {
       originWhitelist={["*"]}
       source={{ uri: url }}
       onMessage={getMessageFromWeb}
-      onLoad={handleOnLoad}
+      onLoad={debouncedHandleOnLoad}
       onError={handleLoadError}
       onNavigationStateChange={onNavigationStateChange}
       bounces={false}
       overScrollMode="never"
+      injectedJavaScript={`
+        (function() {
+          var oldLog = console.error;
+          console.error = function(...args) {
+            oldLog.apply(console, args);
+            window.ReactNativeWebView.postMessage(JSON.stringify({type: 'LOG', data: args}));
+          };
+        })();
+      `}
+      cacheEnabled={false}
     />
   );
 };

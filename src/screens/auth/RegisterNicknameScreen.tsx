@@ -1,4 +1,5 @@
 import { PrimaryButton, ScreenLayout, Typo } from "components";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "constants/key";
 import { AuthContext } from "providers/AuthContextProvider";
 import React, { useContext, useState } from "react";
 import {
@@ -8,8 +9,20 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { setAsyncStorage } from "utils";
 
-export const RegisterNicknameScreen = () => {
+type RegisterNicknameScreenProps = {
+  route: {
+    params: {
+      accessToken: string;
+      refreshToken: string;
+    };
+  };
+};
+
+export const RegisterNicknameScreen = ({
+  route,
+}: RegisterNicknameScreenProps) => {
   const { setIsValidUser } = useContext(AuthContext);
   const [nickname, setNickname] = useState("");
   const [isFocused, setIsFocused] = useState(false);
@@ -31,11 +44,18 @@ export const RegisterNicknameScreen = () => {
     //닉네임 제출
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      await Promise.all([
+        setAsyncStorage(ACCESS_TOKEN, route.params.accessToken),
+        setAsyncStorage(REFRESH_TOKEN, route.params.refreshToken),
+      ]);
+
+      setIsValidUser(true);
     } catch (error) {
       console.error(error);
+      ``;
     } finally {
       setIsSubmitting(false);
-      setIsValidUser(true);
     }
   };
 

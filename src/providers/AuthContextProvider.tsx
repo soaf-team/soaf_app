@@ -1,4 +1,3 @@
-import { getUserProfile } from "apis";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "constants/key";
 import React, { createContext, useEffect, useState } from "react";
 import { getAsyncStorage, removeAsyncStorage } from "utils";
@@ -29,8 +28,18 @@ export const AuthContextProvider = ({
   };
 
   const checkAuth = async () => {
-    const userInfo = await getUserProfile();
-    setIsValidUser(!!userInfo);
+    try {
+      const [accessToken, refreshToken] = await Promise.all([
+        getAsyncStorage(ACCESS_TOKEN),
+        getAsyncStorage(REFRESH_TOKEN),
+      ]);
+
+      if (!accessToken || !refreshToken) return;
+
+      setIsValidUser(true);
+    } catch (error) {
+      console.error("error", error);
+    }
   };
 
   useEffect(() => {

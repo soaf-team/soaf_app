@@ -38,14 +38,14 @@ export const RippleButton = ({
 
   return (
     <Animated.View
-      style={[styles.container, { transform: [{ scale: scaleValue }] }, style]}
+      style={[styles.container, { transform: [{ scale: scaleValue }] }]}
     >
       <TouchableRipple
         onPress={onPress}
         onPressIn={onPressIn}
         onPressOut={onPressOut}
         rippleColor={rippleColor}
-        style={styles.ripple}
+        style={[styles.ripple, style]}
         {...props}
       >
         <View style={styles.childrenContainer}>{children}</View>

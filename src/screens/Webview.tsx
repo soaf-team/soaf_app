@@ -7,7 +7,7 @@ import SplashScreen from "react-native-splash-screen";
 
 import { useWebviewBackHandler, useWebview, useDebounce } from "hooks";
 
-import { NetworkErrorScreen } from "./fallbacks";
+import { LoadingScreen, NetworkErrorScreen } from "./fallbacks";
 import { getAsyncStorage } from "utils";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "constants/key";
 
@@ -22,6 +22,7 @@ export const Webview = ({ url }: WebViewContainerProps) => {
   const { setCurrentUrl } = useWebviewBackHandler(webViewRef);
 
   const [loadError, setLoadError] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleLoadError = () => {
     setLoadError(true);
@@ -29,6 +30,7 @@ export const Webview = ({ url }: WebViewContainerProps) => {
 
   const debouncedHandleOnLoad = useDebounce(async (event: any) => {
     try {
+      setIsLoading(true);
       const [accessToken, refreshToken] = await Promise.all([
         getAsyncStorage(ACCESS_TOKEN),
         getAsyncStorage(REFRESH_TOKEN),
@@ -38,6 +40,7 @@ export const Webview = ({ url }: WebViewContainerProps) => {
     } catch (error) {
       console.error("error", error);
     } finally {
+      setIsLoading(false);
       SplashScreen.hide();
     }
   }, 500);
@@ -63,17 +66,18 @@ export const Webview = ({ url }: WebViewContainerProps) => {
   }
 
   return (
-    <WebViewNative
-      ref={webViewRef}
-      originWhitelist={["*"]}
-      source={{ uri: url }}
-      onMessage={getMessageFromWeb}
-      onLoad={debouncedHandleOnLoad}
-      onError={handleLoadError}
-      onNavigationStateChange={onNavigationStateChange}
-      bounces={false}
-      overScrollMode="never"
-      injectedJavaScript={`
+    <>
+      <WebViewNative
+        ref={webViewRef}
+        originWhitelist={["*"]}
+        source={{ uri: url }}
+        onMessage={getMessageFromWeb}
+        onLoad={debouncedHandleOnLoad}
+        onError={handleLoadError}
+        onNavigationStateChange={onNavigationStateChange}
+        bounces={false}
+        overScrollMode="never"
+        injectedJavaScript={`
         (function() {
           var oldLog = console.error;
           console.error = function(...args) {
@@ -82,7 +86,9 @@ export const Webview = ({ url }: WebViewContainerProps) => {
           };
         })();
       `}
-      cacheEnabled={false}
-    />
+        cacheEnabled={false}
+      />
+      <LoadingScreen isLoading={isLoading} />
+    </>
   );
 };

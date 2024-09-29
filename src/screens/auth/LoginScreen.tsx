@@ -8,13 +8,12 @@ import NaverLogin from "@react-native-seoul/naver-login";
 import { login } from "apis";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationType } from "types/navigation";
-import { setAsyncStorage } from "utils";
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "constants/key";
+import { setTokenToStorage } from "utils";
 
 GoogleSignin.configure({
-  scopes: ["email"], // 요청할 권한
+  scopes: ["email"],
   webClientId:
-    "174658533953-e5v5jaq8pf4lbt9iq7nb4leh8q6c132i.apps.googleusercontent.com", // Google 개발자 콘솔에서 얻은 웹 클라이언트 ID
+    "174658533953-e5v5jaq8pf4lbt9iq7nb4leh8q6c132i.apps.googleusercontent.com",
 });
 
 NaverLogin.initialize({
@@ -137,18 +136,13 @@ export const LoginScreen = () => {
         oAuthType,
       });
 
+      await setTokenToStorage(accessToken, refreshToken);
+
       if (isFirstLogin) {
-        navigation.navigate("AgreementScreen", {
-          accessToken,
-          refreshToken,
-        });
+        navigation.navigate("AgreementScreen");
         setIsLoading(false);
         return;
       } else {
-        await Promise.all([
-          setAsyncStorage(ACCESS_TOKEN, accessToken),
-          setAsyncStorage(REFRESH_TOKEN, refreshToken),
-        ]);
         setIsValidUser(true);
       }
     } catch (error) {

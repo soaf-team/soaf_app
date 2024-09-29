@@ -1,15 +1,11 @@
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RouteProp } from "@react-navigation/native";
 
 export type RootStackParamList = {
   LoginScreen: undefined;
-  AgreementScreen: {
-    accessToken: string;
-    refreshToken: string;
-  };
-  RegisterNicknameScreen: {
-    accessToken: string;
-    refreshToken: string;
+  AgreementScreen: undefined;
+  RegisterNicknameScreen: undefined;
+  SignupCompleteScreen: {
+    nickname: string;
   };
   TermsOfUseAgreementScreen: undefined;
   PrivacyPolicyAgreementScreen: undefined;

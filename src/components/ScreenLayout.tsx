@@ -4,7 +4,7 @@ import { Header, HeaderProps } from "./Header";
 
 type ScreenLayoutProps = {
   children: React.ReactNode;
-  header?: HeaderProps;
+  header?: HeaderProps | null;
   style?: StyleProp<ViewStyle>;
 };
 

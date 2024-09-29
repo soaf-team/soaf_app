@@ -13,7 +13,11 @@ import {
   SensitiveInfoAgreementScreen,
   TermsOfUseAgreementScreen,
 } from "screens/agreements";
-import { LoginScreen, RegisterNicknameScreen } from "screens/auth";
+import {
+  LoginScreen,
+  RegisterNicknameScreen,
+  SignupCompleteScreen,
+} from "screens/auth";
 import { RootStackParamList } from "types/navigation";
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -56,6 +60,10 @@ export const AuthStack: React.FC = () => {
       <Stack.Screen
         name="RegisterNicknameScreen"
         component={RegisterNicknameScreen}
+      />
+      <Stack.Screen
+        name="SignupCompleteScreen"
+        component={SignupCompleteScreen}
       />
     </Stack.Navigator>
   );

@@ -1,7 +1,6 @@
 import { PrimaryButton, ScreenLayout, Typo } from "components";
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "constants/key";
 import { AuthContext } from "providers/AuthContextProvider";
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import {
   Image,
   StyleSheet,
@@ -9,19 +8,14 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { setAsyncStorage } from "utils";
+import { StackNavigationType } from "types/navigation";
 
 type RegisterNicknameScreenProps = {
-  route: {
-    params: {
-      accessToken: string;
-      refreshToken: string;
-    };
-  };
+  navigation: StackNavigationType;
 };
 
 export const RegisterNicknameScreen = ({
-  route,
+  navigation,
 }: RegisterNicknameScreenProps) => {
   const { setIsValidUser } = useContext(AuthContext);
   const [nickname, setNickname] = useState("");
@@ -41,16 +35,12 @@ export const RegisterNicknameScreen = ({
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    //닉네임 제출
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      await Promise.all([
-        setAsyncStorage(ACCESS_TOKEN, route.params.accessToken),
-        setAsyncStorage(REFRESH_TOKEN, route.params.refreshToken),
-      ]);
-
-      setIsValidUser(true);
+      navigation.navigate("SignupCompleteScreen", {
+        nickname,
+      });
     } catch (error) {
       console.error(error);
       ``;

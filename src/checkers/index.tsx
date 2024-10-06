@@ -1,5 +1,5 @@
 import React from "react";
-import CodePushChecker from "./CodePushChecker";
+// import CodePushChecker from "./CodePushChecker";
 import { AuthChecker } from "./AuthChecker";
 
 type Props = {
@@ -8,8 +8,8 @@ type Props = {
 
 export const CheckerGroup = ({ children }: Props) => {
   return (
-    <CodePushChecker>
-      <AuthChecker>{children}</AuthChecker>
-    </CodePushChecker>
+    // <CodePushChecker>
+    <AuthChecker>{children}</AuthChecker>
+    // </CodePushChecker>
   );
 };

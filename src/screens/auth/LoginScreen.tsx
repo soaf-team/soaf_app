@@ -20,8 +20,8 @@ NaverLogin.initialize({
   appName: "소프",
   consumerKey: "eJGGBmNunLFpm5PFxL3h",
   consumerSecret: "AiKdPtC6BZ",
-  // serviceUrlSchemeIOS: "com.soaf",
-  // disableNaverAppAuthIOS: true,
+  serviceUrlSchemeIOS: "com.soaf.app",
+  disableNaverAppAuthIOS: true,
 });
 
 const OAUTH_TYPE = {
@@ -71,14 +71,22 @@ export const LoginScreen = () => {
     const refreshToken = token.refreshToken;
     const email = profile.email;
 
+    if (!accessToken || !refreshToken || !email) {
+      throw new Error("카카오 로그인에 실패했습니다.");
+    }
+
     return { accessToken, refreshToken, email };
   };
 
   const googleLogin = async () => {
     await GoogleSignin.hasPlayServices();
     const response = await GoogleSignin.signIn();
-    const accessToken = response.data?.idToken ?? null;
-    const email = response.data?.user.email ?? null;
+    const accessToken = response.data?.idToken;
+    const email = response.data?.user.email;
+
+    if (!accessToken || !email) {
+      throw new Error("구글 로그인에 실패했습니다.");
+    }
 
     return { accessToken, email };
   };
@@ -87,7 +95,9 @@ export const LoginScreen = () => {
     const { successResponse } = await NaverLogin.login();
     const accessToken = successResponse?.accessToken;
 
-    if (!accessToken) return { accessToken: null, email: null };
+    if (!accessToken) {
+      throw new Error("네이버 로그인에 실패했습니다.");
+    }
 
     const { response } = await NaverLogin.getProfile(accessToken);
     const email = response?.email ?? null;

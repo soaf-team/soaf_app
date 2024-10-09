@@ -1686,6 +1686,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@bam.tech/react-native-image-resizer@npm:^3.0.10":
+  version: 3.0.10
+  resolution: "@bam.tech/react-native-image-resizer@npm:3.0.10"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/980d40d38d9a93829f4cddb699c7a72a65cc06091adffc6de560d87de67d28c762ecd9f5ba3dce412f5502a3746b90d34000e318ae60cfcf323a78b4f813587b
+  languageName: node
+  linkType: hard
+
 "@callstack/react-theme-provider@npm:^3.0.9":
   version: 3.0.9
   resolution: "@callstack/react-theme-provider@npm:3.0.9"
@@ -3938,6 +3948,7 @@ __metadata:
   resolution: "@soaf/app@workspace:."
   dependencies:
     "@babel/core": "npm:^7.20.0"
+    "@bam.tech/react-native-image-resizer": "npm:^3.0.10"
     "@notifee/react-native": "npm:^9.0.0"
     "@react-native-async-storage/async-storage": "npm:^2.0.0"
     "@react-native-firebase/app": "npm:^20.5.0"

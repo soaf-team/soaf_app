@@ -1,4 +1,3 @@
-import { RefObject } from 'react';
 import {
   launchImageLibrary,
   ImagePickerResponse,
@@ -7,8 +6,8 @@ import {
   CameraOptions,
   launchCamera,
 } from 'react-native-image-picker';
+import ImageResizer from '@bam.tech/react-native-image-resizer';
 import RNFS from 'react-native-fs';
-import WebView from 'react-native-webview';
 
 export const openCamera = async (): Promise<Asset | null> => {
   return new Promise((resolve, reject) => {
@@ -37,7 +36,55 @@ export const openCamera = async (): Promise<Asset | null> => {
   });
 };
 
-export const openAlbumOriginal = async (): Promise<Asset[] | null> => {
+// 사진 관련
+const BASE_SIZE = 1024000; // 1MB (썸네일 작업 유무 기준 사이즈)
+const COMP_SIZE = 512000; // 500KB (썸네일 작업 결과물 목표 사이즈)
+
+const resizeAndCompressImage = async (image: Asset): Promise<string> => {
+  if (!image.uri) {
+    console.error('Image URI is undefined');
+    return '';
+  }
+
+  try {
+    // 파일 크기 확인
+    const fileInfo = await RNFS.stat(image.uri);
+    const fileSize = fileInfo.size;
+
+    if (fileSize <= BASE_SIZE) {
+      // 기준 크기 이하면 원본 반환
+      const base64 = await RNFS.readFile(image.uri, 'base64');
+      return `data:${image.type || 'image/jpeg'};base64,${base64}`;
+    }
+
+    // 리사이징 비율 계산
+    const ratio = Math.sqrt(fileSize / COMP_SIZE);
+    const width = image.width ? Math.round(image.width / ratio) : 1024;
+    const height = image.height ? Math.round(image.height / ratio) : 1024;
+
+    // 이미지 리사이징
+    const resizedImage = await ImageResizer.createResizedImage(
+      image.uri,
+      width,
+      height,
+      'JPEG',
+      90,
+      0,
+      undefined,
+      false,
+      { mode: 'contain', onlyScaleDown: true }
+    );
+
+    // 리사이즈된 이미지를 base64로 변환
+    const base64 = await RNFS.readFile(resizedImage.uri, 'base64');
+    return `data:image/jpeg;base64,${base64}`;
+  } catch (error) {
+    console.error('Error resizing image:', error);
+    return '';
+  }
+};
+
+const openAlbumOriginal = async (): Promise<Asset[] | null> => {
   return new Promise((resolve, reject) => {
     const options: ImageLibraryOptions = {
       mediaType: 'photo',
@@ -63,43 +110,18 @@ export const openAlbumOriginal = async (): Promise<Asset[] | null> => {
   });
 };
 
-export const openAlbum = async (webViewRef: RefObject<WebView<{}>>) => {
+export const openAlbum = async () => {
   try {
-    const selectedImages = await openAlbumOriginal(); // 기존의 openAlbum 함수를 openAlbumOriginal로 변경
+    const selectedImages = await openAlbumOriginal();
     if (selectedImages && selectedImages.length > 0) {
       const base64Array = await Promise.all(
-        selectedImages.map(compressAndEncodeImage)
+        selectedImages.map(resizeAndCompressImage)
       );
-      sendImagesToWeb(base64Array, webViewRef);
+      return base64Array.filter((base64) => base64 !== ''); // 빈 문자열 제거
     } else {
       console.log('No images selected');
     }
   } catch (error) {
     console.error('Error processing images:', error);
-  }
-};
-
-const compressAndEncodeImage = async (image: Asset): Promise<string> => {
-  if (!image.uri) {
-    console.error('Image URI is undefined');
-    return '';
-  }
-
-  const base64Image = await RNFS.readFile(image.uri, 'base64');
-  const imageType = image.type || 'image/jpeg';
-  return `data:${imageType};base64,${base64Image}`;
-};
-
-const sendImagesToWeb = (
-  base64Array: string[],
-  webViewRef: RefObject<WebView<{}>>
-) => {
-  if (webViewRef.current) {
-    webViewRef.current.postMessage(
-      JSON.stringify({
-        type: 'SELECTED_IMAGES',
-        imageArray: base64Array,
-      })
-    );
   }
 };

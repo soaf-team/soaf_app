@@ -27,7 +27,12 @@ export const useWebview = (webViewRef: RefObject<WebView<{}>>) => {
         await openCamera();
         break;
       case 'OPEN_ALBUM':
-        await openAlbum(webViewRef);
+        const base64Array = await openAlbum();
+        sendMessageToWeb({
+          type: 'SELECTED_IMAGES',
+          imageArray: base64Array,
+          roomId: nativeEvent.data,
+        });
         break;
       case 'REFRESH_TOKEN':
         const { accessToken, refreshToken } = nativeEvent.data;

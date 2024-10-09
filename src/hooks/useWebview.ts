@@ -1,8 +1,8 @@
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "constants/key";
-import { AuthContext } from "providers/AuthContextProvider";
-import { RefObject, useContext } from "react";
-import WebView, { WebViewMessageEvent } from "react-native-webview";
-import { setAsyncStorage } from "utils";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from 'constants/key';
+import { AuthContext } from 'providers/AuthContextProvider';
+import { RefObject, useContext } from 'react';
+import WebView, { WebViewMessageEvent } from 'react-native-webview';
+import { setAsyncStorage, openAlbum, openCamera } from 'utils';
 
 export const useWebview = (webViewRef: RefObject<WebView<{}>>) => {
   const { logout } = useContext(AuthContext);
@@ -20,11 +20,16 @@ export const useWebview = (webViewRef: RefObject<WebView<{}>>) => {
     const eventType = nativeEvent.type;
 
     switch (eventType) {
-      case "LOG":
-        console.log("web :" + JSON.stringify(nativeEvent.data));
+      case 'LOG':
+        console.log('web :' + JSON.stringify(nativeEvent.data));
         break;
-
-      case "REFRESH_TOKEN":
+      case 'OPEN_CAMERA':
+        await openCamera();
+        break;
+      case 'OPEN_ALBUM':
+        await openAlbum(webViewRef);
+        break;
+      case 'REFRESH_TOKEN':
         const { accessToken, refreshToken } = nativeEvent.data;
         try {
           Promise.all([
@@ -32,10 +37,10 @@ export const useWebview = (webViewRef: RefObject<WebView<{}>>) => {
             setAsyncStorage(REFRESH_TOKEN, refreshToken),
           ]);
         } catch (error) {
-          console.log("error", error);
+          console.log('error', error);
         }
         break;
-      case "LOGOUT":
+      case 'LOGOUT':
         logout();
         break;
       default:

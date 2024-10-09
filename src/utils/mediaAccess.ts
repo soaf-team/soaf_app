@@ -98,7 +98,7 @@ const sendImagesToWeb = (
     webViewRef.current.postMessage(
       JSON.stringify({
         type: 'SELECTED_IMAGES',
-        data: base64Array,
+        imageArray: base64Array,
       })
     );
   }

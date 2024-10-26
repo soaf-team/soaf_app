@@ -5,11 +5,18 @@ import {
 } from "react-native-webview";
 import SplashScreen from "react-native-splash-screen";
 
-import { useWebviewBackHandler, useWebview, useDebounce } from "hooks";
+import {
+  useWebviewBackHandler,
+  useWebview,
+  useDebounce,
+  useKeyboardHeight,
+} from "hooks";
 
 import { LoadingScreen, NetworkErrorScreen } from "./fallbacks";
 import { getAsyncStorage } from "utils";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "constants/key";
+import { View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type WebViewContainerProps = {
   url: string;
@@ -17,9 +24,12 @@ type WebViewContainerProps = {
 
 export const Webview = ({ url }: WebViewContainerProps) => {
   const webViewRef = useRef<WebViewNative>(null);
+  const safeAreaInsets = useSafeAreaInsets();
+  const urlWithSafeArea = `${url}?top=${safeAreaInsets.top}&bottom=${safeAreaInsets.bottom}`;
+  const { isKeyboardVisible, screenHeight } = useKeyboardHeight();
 
   const { getMessageFromWeb, sendMessageToWeb } = useWebview(webViewRef);
-  const { setCurrentUrl } = useWebviewBackHandler(webViewRef);
+  const { currentUrl, setCurrentUrl } = useWebviewBackHandler(webViewRef);
 
   const [loadError, setLoadError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -65,12 +75,17 @@ export const Webview = ({ url }: WebViewContainerProps) => {
     return <NetworkErrorScreen onPress={reloadWebView} />;
   }
 
+  const style =
+    currentUrl.includes("diary/write/step3/") && isKeyboardVisible
+      ? { height: screenHeight }
+      : { flex: 1 };
+
   return (
-    <>
+    <View style={style}>
       <WebViewNative
         ref={webViewRef}
         originWhitelist={["*"]}
-        source={{ uri: url }}
+        source={{ uri: urlWithSafeArea }}
         onMessage={getMessageFromWeb}
         onLoad={debouncedHandleOnLoad}
         onError={handleLoadError}
@@ -85,10 +100,36 @@ export const Webview = ({ url }: WebViewContainerProps) => {
             window.ReactNativeWebView.postMessage(JSON.stringify({type: 'LOG', data: args}));
           };
         })();
+
+        const style = document.createElement('style');
+        style.textContent = \`
+          * {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+          }
+          
+          /* 입력 필드는 선택 가능하게 유지 */
+          input, textarea {
+            -webkit-user-select: auto;
+            -khtml-user-select: auto;
+            -moz-user-select: auto;
+            -ms-user-select: auto;
+            user-select: auto;
+          }
+        \`;
+        document.head.appendChild(style);
       `}
         cacheEnabled={false}
+        // textInteractionEnabled={false}
+        dataDetectorTypes="none"
+        scrollEnabled={!isKeyboardVisible}
       />
       <LoadingScreen isLoading={isLoading} />
-    </>
+    </View>
   );
 };

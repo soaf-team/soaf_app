@@ -9,16 +9,16 @@ import {
 import ImageResizer from '@bam.tech/react-native-image-resizer';
 import RNFS from 'react-native-fs';
 
-export const openCamera = async (): Promise<Asset | null> => {
+export const openCamera = async (): Promise<string | null> => {
   return new Promise((resolve, reject) => {
     const options: CameraOptions = {
       mediaType: 'photo',
       quality: 1,
-      saveToPhotos: true, // 촬영한 사진을 갤러리에 저장
-      cameraType: 'back', // 후면 카메라 사용 (전면 카메라를 사용하려면 'front'로 변경)
+      saveToPhotos: true,
+      cameraType: 'back',
     };
 
-    launchCamera(options, (response: ImagePickerResponse) => {
+    launchCamera(options, async (response: ImagePickerResponse) => {
       if (response.didCancel) {
         console.log('User cancelled camera');
         resolve(null);
@@ -27,7 +27,15 @@ export const openCamera = async (): Promise<Asset | null> => {
         reject(new Error(response.errorMessage));
       } else {
         if (response.assets && response.assets.length > 0) {
-          resolve(response.assets[0]); // 카메라는 항상 단일 이미지를 반환
+          try {
+            const base64Image = await resizeAndCompressImage(
+              response.assets[0]
+            );
+            resolve(base64Image);
+          } catch (error) {
+            console.error('Error processing camera image:', error);
+            reject(error);
+          }
         } else {
           resolve(null);
         }

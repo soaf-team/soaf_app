@@ -70,5 +70,6 @@ export const useWebviewBackHandler = (webViewRef: React.RefObject<WebView>) => {
 
   return {
     setCurrentUrl,
+    currentUrl,
   };
 };

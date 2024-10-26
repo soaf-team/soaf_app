@@ -140,19 +140,22 @@ export const LoginScreen = () => {
         throw new Error("로그인에 실패했습니다.");
       }
 
-      const { isFirstLogin, accessToken, refreshToken } = await login({
+      const response = await login({
         oAuthToken,
         email,
         oAuthType,
       });
+      const { resultCase, accessToken, refreshToken } = response;
 
       await setTokenToStorage(accessToken, refreshToken);
 
-      if (isFirstLogin) {
+      if (resultCase === "join") {
         navigation.navigate("AgreementScreen");
         setIsLoading(false);
         return;
-      } else {
+      } else if (resultCase === "login") {
+        setIsValidUser(true);
+      } else if (resultCase === "sns") {
         setIsValidUser(true);
       }
     } catch (error) {

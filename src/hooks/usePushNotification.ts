@@ -1,9 +1,6 @@
 import { useEffect } from "react";
 import messaging from "@react-native-firebase/messaging";
-import notifee, {
-  AndroidImportance,
-  AndroidStyle,
-} from "@notifee/react-native";
+import notifee, { AndroidImportance } from "@notifee/react-native";
 
 messaging().setBackgroundMessageHandler(async (remoteMessage) => {
   const title = remoteMessage.notification?.title;

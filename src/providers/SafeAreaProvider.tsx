@@ -9,9 +9,5 @@ type Props = {
 };
 
 export const SafeAreaProvider = ({ children }: Props) => {
-  return (
-    <RNSSafeAreaProvider>
-      <SafeAreaView style={{ flex: 1 }}>{children}</SafeAreaView>
-    </RNSSafeAreaProvider>
-  );
+  return <RNSSafeAreaProvider>{children}</RNSSafeAreaProvider>;
 };

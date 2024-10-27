@@ -76,7 +76,9 @@ export const Webview = ({ url }: WebViewContainerProps) => {
   }
 
   const style =
-    currentUrl.includes("diary/write/step3/") && isKeyboardVisible
+    (currentUrl.includes("diary/write/step3/") ||
+      currentUrl.includes("diary/edit/")) &&
+    isKeyboardVisible
       ? { height: screenHeight }
       : { flex: 1 };
 

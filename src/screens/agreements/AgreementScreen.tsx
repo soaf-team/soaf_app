@@ -1,13 +1,25 @@
 import { PrimaryButton, ScreenLayout, Typo } from "components";
 import { useState } from "react";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import { OauthType } from "types/global";
 import { StackNavigationType } from "types/navigation";
 
 type AgreementScreenProps = {
   navigation: StackNavigationType;
+  route: {
+    params: {
+      password: string;
+      email: string;
+      sns: OauthType;
+    };
+  };
 };
 
-export const AgreementScreen = ({ navigation }: AgreementScreenProps) => {
+export const AgreementScreen = ({
+  navigation,
+  route,
+}: AgreementScreenProps) => {
+  const { password, email, sns } = route.params;
   const [checkedIndexes, setCheckedIndexes] = useState<number[]>([]);
 
   function containsNumbers(arr: number[]) {
@@ -104,7 +116,11 @@ export const AgreementScreen = ({ navigation }: AgreementScreenProps) => {
         <PrimaryButton
           title="동의하기"
           onPress={() => {
-            navigation.navigate("RegisterNicknameScreen");
+            navigation.navigate("RegisterNicknameScreen", {
+              password,
+              email,
+              sns,
+            });
           }}
           disabled={!isButtonActive}
         />

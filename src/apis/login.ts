@@ -3,11 +3,14 @@ import { axiosInstance } from "./axios";
 import { extractTokensFromCookies } from "utils";
 
 type LoginResponse = {
-  data: {
-    resultCase: LoginResultCase;
-    access: string;
-    refresh: string;
-  };
+  resultCase: LoginResultCase;
+  access?: string;
+  refresh?: string;
+  password?: string;
+};
+
+type APIResponse = {
+  data: LoginResponse;
   statusCode: number;
 };
 type LoginResultCase = "login" | "join" | "sns";
@@ -18,17 +21,22 @@ export const login = async (payload: {
   oAuthType: OauthType;
 }): Promise<{
   resultCase: LoginResultCase;
-  accessToken: string;
-  refreshToken: string;
+  accessToken?: string;
+  refreshToken?: string;
+  password?: string;
 }> => {
-  const response = await axiosInstance.post<LoginResponse>("user/sns-login", {
+  const response = await axiosInstance.post<APIResponse>("user/sns-login", {
     email: payload.email,
     token: payload.oAuthToken,
     sns: payload.oAuthType,
     name: "test",
   });
 
-  const { resultCase } = response.data.data;
+  const { resultCase, password } = response.data.data;
+
+  if (resultCase === "join") {
+    return { resultCase, password };
+  }
 
   const cookies = response.headers["set-cookie"];
 

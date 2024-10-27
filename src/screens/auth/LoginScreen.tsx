@@ -10,8 +10,8 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationType } from "types/navigation";
 import { setTokenToStorage } from "utils";
 import { getUserProfile } from "apis/getUserProfile";
-import { postFCMToken } from "apis/postFCMToken";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { postFCMToken } from "apis/postFCMToken";
 
 GoogleSignin.configure({
   scopes: ["email"],
@@ -148,35 +148,42 @@ export const LoginScreen = () => {
         email,
         oAuthType,
       });
-      const { resultCase, accessToken, refreshToken } = response;
-
-      await setTokenToStorage(accessToken, refreshToken);
-      axiosInstance.defaults.headers["x-access-token"] = accessToken;
-      axiosInstance.defaults.headers["x-refresh-token"] = refreshToken;
-
-      const userProfile = await getUserProfile();
-      const userId = userProfile.userId;
-      const fcmToken = await AsyncStorage.getItem("fcmToken");
-
-      if (fcmToken && userId) {
-        await postFCMToken({
-          userId,
-          deviceToken: fcmToken ?? "",
-          deviceType: Platform.OS as "ios" | "android",
-        });
-      }
+      const { resultCase, accessToken, refreshToken, password } = response;
 
       if (resultCase === "join") {
-        navigation.navigate("AgreementScreen");
+        navigation.navigate("AgreementScreen", {
+          email,
+          password: password!,
+          sns: oAuthType,
+        });
         setIsLoading(false);
         return;
       } else if (resultCase === "login") {
+        axiosInstance.defaults.headers["x-access-token"] = accessToken!;
+        axiosInstance.defaults.headers["x-refresh-token"] = refreshToken!;
+
+        const userInfo = await getUserProfile();
+        const userId = userInfo.id;
+        const fcmToken = await AsyncStorage.getItem("fcmToken");
+
+        if (fcmToken) {
+          await postFCMToken({
+            userId,
+            deviceToken: fcmToken,
+            deviceType: Platform.OS as "ios" | "android",
+          });
+        }
+
+        await setTokenToStorage(accessToken!, refreshToken!);
+
         setIsValidUser(true);
+        return;
       } else if (resultCase === "sns") {
+        return;
         setIsValidUser(true);
       }
     } catch (error) {
-      console.error(error);
+      console.error(error.response);
     } finally {
       setIsLoading(false);
     }

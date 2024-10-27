@@ -1,9 +1,16 @@
 import { StackNavigationProp } from "@react-navigation/stack";
+import { OauthType } from "./global";
+
+type SignupParams = {
+  password: string;
+  email: string;
+  sns: OauthType;
+};
 
 export type RootStackParamList = {
   LoginScreen: undefined;
-  AgreementScreen: undefined;
-  RegisterNicknameScreen: undefined;
+  AgreementScreen: SignupParams;
+  RegisterNicknameScreen: SignupParams;
   SignupCompleteScreen: {
     nickname: string;
   };

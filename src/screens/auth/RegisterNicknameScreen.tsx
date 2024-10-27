@@ -1,23 +1,36 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getUserProfile } from "apis/getUserProfile";
+import { postFCMToken } from "apis/postFCMToken";
+import { signup } from "apis/signup";
 import { PrimaryButton, ScreenLayout, Typo } from "components";
-import { AuthContext } from "providers/AuthContextProvider";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import {
   Image,
+  Platform,
   StyleSheet,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
+import { OauthType } from "types/global";
 import { StackNavigationType } from "types/navigation";
 
 type RegisterNicknameScreenProps = {
   navigation: StackNavigationType;
+  route: {
+    params: {
+      password: string;
+      email: string;
+      sns: OauthType;
+    };
+  };
 };
 
 export const RegisterNicknameScreen = ({
   navigation,
+  route,
 }: RegisterNicknameScreenProps) => {
-  const { setIsValidUser } = useContext(AuthContext);
+  const { password, email, sns } = route.params;
   const [nickname, setNickname] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -36,14 +49,23 @@ export const RegisterNicknameScreen = ({
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await signup({ name: nickname, password, email, sns });
+      const { _id } = response;
+
+      const fcmToken = await AsyncStorage.getItem("fcmToken");
+      if (fcmToken) {
+        await postFCMToken({
+          userId: _id,
+          deviceToken: fcmToken,
+          deviceType: Platform.OS as "ios" | "android",
+        });
+      }
 
       navigation.navigate("SignupCompleteScreen", {
         nickname,
       });
     } catch (error) {
       console.error(error);
-      ``;
     } finally {
       setIsSubmitting(false);
     }

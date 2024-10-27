@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import messaging from "@react-native-firebase/messaging";
 import notifee, { AndroidImportance } from "@notifee/react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 messaging().setBackgroundMessageHandler(async (remoteMessage) => {
   const title = remoteMessage.notification?.title;
@@ -38,6 +39,7 @@ export function usePushNotification() {
     try {
       await messaging().requestPermission();
       const token = await messaging().getToken();
+      await AsyncStorage.setItem("fcmToken", token);
       return token;
     } catch (error) {
       console.error("FCM 토큰을 가져오는 데 실패했습니다:", error);

@@ -5,10 +5,13 @@ import { AuthContext } from "providers/AuthContextProvider";
 import React, { useContext, useState } from "react";
 import { Image, Platform, StyleSheet, View } from "react-native";
 import NaverLogin from "@react-native-seoul/naver-login";
-import { login } from "apis";
+import { axiosInstance, login } from "apis";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationType } from "types/navigation";
 import { setTokenToStorage } from "utils";
+import { getUserProfile } from "apis/getUserProfile";
+import { postFCMToken } from "apis/postFCMToken";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 GoogleSignin.configure({
   scopes: ["email"],
@@ -148,6 +151,20 @@ export const LoginScreen = () => {
       const { resultCase, accessToken, refreshToken } = response;
 
       await setTokenToStorage(accessToken, refreshToken);
+      axiosInstance.defaults.headers["x-access-token"] = accessToken;
+      axiosInstance.defaults.headers["x-refresh-token"] = refreshToken;
+
+      const userProfile = await getUserProfile();
+      const userId = userProfile.userId;
+      const fcmToken = await AsyncStorage.getItem("fcmToken");
+
+      if (fcmToken && userId) {
+        await postFCMToken({
+          userId,
+          deviceToken: fcmToken ?? "",
+          deviceType: Platform.OS as "ios" | "android",
+        });
+      }
 
       if (resultCase === "join") {
         navigation.navigate("AgreementScreen");

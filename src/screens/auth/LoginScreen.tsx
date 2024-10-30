@@ -12,6 +12,7 @@ import { setTokenToStorage } from "utils";
 import { getUserProfile } from "apis/getUserProfile";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { postFCMToken } from "apis/postFCMToken";
+import appleAuth from "@invertase/react-native-apple-authentication";
 
 GoogleSignin.configure({
   scopes: ["email"],
@@ -64,6 +65,20 @@ export const LoginScreen = () => {
   const navigation = useNavigation<StackNavigationType>();
   const { setIsValidUser } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(false);
+
+  const appleLogin = async () => {
+    const appleAuthRequestResponse = await appleAuth.performRequest({
+      requestedOperation: appleAuth.Operation.LOGIN,
+      requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+    });
+
+    console.log(appleAuthRequestResponse);
+
+    return {
+      accessToken: appleAuthRequestResponse.identityToken,
+      email: appleAuthRequestResponse.email,
+    };
+  };
 
   const kakaoLogin = async () => {
     const [token, profile] = await Promise.all([
@@ -122,7 +137,10 @@ export const LoginScreen = () => {
           email = kakaoEmail;
           break;
         case "apple":
-          // 애플 로그인
+          const { accessToken: appleAccessToken, email: appleEmail } =
+            await appleLogin();
+          oAuthToken = appleAccessToken;
+          email = appleEmail ?? getRandomEmail();
           break;
         case "google":
           const { accessToken: googleAccessToken, email: googleEmail } =
@@ -155,6 +173,7 @@ export const LoginScreen = () => {
           email,
           password: password!,
           sns: oAuthType,
+          token: oAuthToken,
         });
         setIsLoading(false);
         return;
@@ -183,7 +202,7 @@ export const LoginScreen = () => {
         setIsValidUser(true);
       }
     } catch (error) {
-      console.error(error.response);
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
@@ -312,3 +331,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
 });
+
+const getRandomEmail = () => {
+  return `${Math.random()}@soaf.com`;
+};

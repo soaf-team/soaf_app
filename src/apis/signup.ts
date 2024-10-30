@@ -1,6 +1,5 @@
 import { OauthType } from "types/global";
 import { axiosInstance } from "./axios";
-import { extractTokensFromCookies, setTokenToStorage } from "utils";
 
 type SignupProps = {
   email: string;
@@ -16,11 +15,5 @@ export const signup = async ({ name, password, email, sns }: SignupProps) => {
     email,
     sns,
   });
-
-  const cookies = response.headers["set-cookie"];
-  if (!cookies) throw new Error("No cookies found in response headers");
-  const { accessToken, refreshToken } = extractTokensFromCookies(cookies);
-  await setTokenToStorage(accessToken!, refreshToken!);
-
   return response.data.data;
 };

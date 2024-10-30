@@ -94,6 +94,7 @@ export const Webview = ({ url }: WebViewContainerProps) => {
         onNavigationStateChange={onNavigationStateChange}
         bounces={false}
         overScrollMode="never"
+        scalesPageToFit={false}
         injectedJavaScript={`
         (function() {
           var oldLog = console.error;
@@ -102,6 +103,12 @@ export const Webview = ({ url }: WebViewContainerProps) => {
             window.ReactNativeWebView.postMessage(JSON.stringify({type: 'LOG', data: args}));
           };
         })();
+
+        const meta = document.createElement('meta');
+        meta.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no');
+        meta.setAttribute('name', 'viewport');
+        document.getElementsByTagName('head')[0].appendChild(meta);
+        true;
 
         const style = document.createElement('style');
         style.textContent = \`

@@ -1,6 +1,7 @@
 import { PrimaryButton, ScreenLayout, Typo } from "components";
 import { useState } from "react";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { OauthType } from "types/global";
 import { StackNavigationType } from "types/navigation";
 
@@ -11,6 +12,7 @@ type AgreementScreenProps = {
       password: string;
       email: string;
       sns: OauthType;
+      token: string;
     };
   };
 };
@@ -19,7 +21,7 @@ export const AgreementScreen = ({
   navigation,
   route,
 }: AgreementScreenProps) => {
-  const { password, email, sns } = route.params;
+  const { password, email, sns, token } = route.params;
   const [checkedIndexes, setCheckedIndexes] = useState<number[]>([]);
 
   function containsNumbers(arr: number[]) {
@@ -53,79 +55,82 @@ export const AgreementScreen = ({
   };
 
   return (
-    <ScreenLayout>
-      <Typo
-        size={22}
-        weight="bold"
-        style={styles.title}
-      >{`이용 약관에\n동의해 주세요`}</Typo>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+      <ScreenLayout>
+        <Typo
+          size={22}
+          weight="bold"
+          style={styles.title}
+        >{`이용 약관에\n동의해 주세요`}</Typo>
 
-      <View style={styles.content}>
-        <TouchableOpacity
-          style={styles.contentTitle}
-          onPress={handleAllCheck}
-          activeOpacity={0.9}
-        >
-          <Image
-            source={
-              AGREEMENT_LIST.length === checkedIndexes.length
-                ? require("assets/images/checkbox-on.png")
-                : require("assets/images/checkbox-off.png")
-            }
-            style={styles.checkbox}
-          />
-          <Typo size={18} weight="medium">
-            필수 약관 전체동의
-          </Typo>
-        </TouchableOpacity>
-        <View style={styles.contentListContainer}>
-          {AGREEMENT_LIST.map((item) => (
-            <View key={item.id} style={styles.contentList}>
-              <TouchableOpacity
-                style={styles.contentListLeft}
-                onPress={() => handleCheck(item.id)}
-                activeOpacity={0.9}
-              >
-                <Image
-                  source={
-                    checkedIndexes.includes(item.id)
-                      ? require("assets/images/check-on.png")
-                      : require("assets/images/check-off.png")
-                  }
-                  style={styles.icon}
-                />
-                <Typo size={16} weight="medium">
-                  {item.title}
-                </Typo>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate(item.screen as never);
-                }}
-              >
-                <Image
-                  source={require("assets/images/right-arrow.png")}
-                  style={styles.icon}
-                />
-              </TouchableOpacity>
-            </View>
-          ))}
+        <View style={styles.content}>
+          <TouchableOpacity
+            style={styles.contentTitle}
+            onPress={handleAllCheck}
+            activeOpacity={0.9}
+          >
+            <Image
+              source={
+                AGREEMENT_LIST.length === checkedIndexes.length
+                  ? require("assets/images/checkbox-on.png")
+                  : require("assets/images/checkbox-off.png")
+              }
+              style={styles.checkbox}
+            />
+            <Typo size={18} weight="medium">
+              필수 약관 전체동의
+            </Typo>
+          </TouchableOpacity>
+          <View style={styles.contentListContainer}>
+            {AGREEMENT_LIST.map((item) => (
+              <View key={item.id} style={styles.contentList}>
+                <TouchableOpacity
+                  style={styles.contentListLeft}
+                  onPress={() => handleCheck(item.id)}
+                  activeOpacity={0.9}
+                >
+                  <Image
+                    source={
+                      checkedIndexes.includes(item.id)
+                        ? require("assets/images/check-on.png")
+                        : require("assets/images/check-off.png")
+                    }
+                    style={styles.icon}
+                  />
+                  <Typo size={16} weight="medium">
+                    {item.title}
+                  </Typo>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate(item.screen as never);
+                  }}
+                >
+                  <Image
+                    source={require("assets/images/right-arrow.png")}
+                    style={styles.icon}
+                  />
+                </TouchableOpacity>
+              </View>
+            ))}
+          </View>
         </View>
-      </View>
-      <View style={styles.buttonContainer}>
-        <PrimaryButton
-          title="동의하기"
-          onPress={() => {
-            navigation.navigate("RegisterNicknameScreen", {
-              password,
-              email,
-              sns,
-            });
-          }}
-          disabled={!isButtonActive}
-        />
-      </View>
-    </ScreenLayout>
+        <View style={styles.buttonContainer}>
+          <PrimaryButton
+            title="동의하기"
+            onPress={() => {
+              navigation.navigate("RegisterNicknameScreen", {
+                password,
+                email,
+                sns,
+                token,
+              });
+            }}
+            disabled={!isButtonActive}
+          />
+        </View>
+      </ScreenLayout>
+    </SafeAreaView>
   );
 };
 

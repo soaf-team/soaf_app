@@ -5,6 +5,7 @@ type SignupParams = {
   password: string;
   email: string;
   sns: OauthType;
+  token: string;
 };
 
 export type RootStackParamList = {

@@ -17,3 +17,5 @@ export const PrivacyPolicyAgreementScreen = () => {
     </ScreenLayout>
   );
 };
+
+PrivacyPolicyAgreementScreen.displayName = "PrivacyPolicyAgreementScreen";

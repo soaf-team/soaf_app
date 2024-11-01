@@ -222,3 +222,5 @@ const AGREEMENT_LIST = [
     screen: "MarketingAgreementScreen",
   },
 ];
+
+AgreementScreen.displayName = "AgreementScreen";

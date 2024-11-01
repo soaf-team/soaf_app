@@ -17,3 +17,5 @@ export const TermsOfUseAgreementScreen = () => {
     </ScreenLayout>
   );
 };
+
+TermsOfUseAgreementScreen.displayName = "TermsOfUseAgreementScreen";

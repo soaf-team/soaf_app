@@ -18,3 +18,5 @@ export const AgeAgreementScreen = () => {
     </ScreenLayout>
   );
 };
+
+AgeAgreementScreen.displayName = "AgeAgreementScreen";

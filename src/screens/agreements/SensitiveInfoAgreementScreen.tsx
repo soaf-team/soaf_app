@@ -17,3 +17,5 @@ export const SensitiveInfoAgreementScreen = () => {
     </ScreenLayout>
   );
 };
+
+SensitiveInfoAgreementScreen.displayName = "SensitiveInfoAgreementScreen";

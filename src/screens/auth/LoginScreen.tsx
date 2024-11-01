@@ -335,3 +335,5 @@ const styles = StyleSheet.create({
 const getRandomEmail = () => {
   return `${Math.random()}@soaf.com`;
 };
+
+LoginScreen.displayName = "LoginScreen";

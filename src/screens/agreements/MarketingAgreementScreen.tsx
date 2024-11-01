@@ -17,3 +17,5 @@ export const MarketingAgreementScreen = () => {
     </ScreenLayout>
   );
 };
+
+MarketingAgreementScreen.displayName = "MarketingAgreementScreen";

@@ -1,8 +1,10 @@
 import { useNavigation } from "@react-navigation/native";
+import { Typo } from "components/Typo";
 import React from "react";
 import {
   Image,
   StyleSheet,
+  Text,
   TouchableOpacity,
   View,
   ViewProps,
@@ -21,22 +23,24 @@ export const Header = ({
   style,
   ...props
 }: HeaderProps) => {
-  const { goBack } = useNavigation();
+  const { goBack, canGoBack } = useNavigation();
 
   return (
     <View style={[styles.container, style]} {...props}>
-      {leftSlot === undefined ? (
-        <TouchableOpacity onPress={goBack} activeOpacity={1}>
-          <Image
-            source={require("assets/images/back.png")}
-            style={{ width: 24, height: 24 }}
-          />
-        </TouchableOpacity>
-      ) : (
-        leftSlot
-      )}
-      <View style={styles.title}>{title}</View>
-      {rightSlot}
+      <View style={styles.slotArea}>
+        {leftSlot === undefined && canGoBack() ? (
+          <TouchableOpacity onPress={goBack} activeOpacity={1}>
+            <Image
+              source={require("assets/images/back.png")}
+              style={{ width: 24, height: 24 }}
+            />
+          </TouchableOpacity>
+        ) : (
+          leftSlot
+        )}
+      </View>
+      <Typo variant="head6b">{title}</Typo>
+      <View style={styles.slotArea}>{rightSlot}</View>
     </View>
   );
 };
@@ -48,6 +52,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     height: 52,
+  },
+  slotArea: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: 24,
+    height: 24,
   },
   title: {
     flex: 1,

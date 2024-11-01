@@ -1,10 +1,11 @@
 import React from "react";
 import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { Header, HeaderProps } from "./Header";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type ScreenLayoutProps = {
   children: React.ReactNode;
-  header?: HeaderProps | null;
+  header?: HeaderProps;
   style?: StyleProp<ViewStyle>;
 };
 
@@ -13,9 +14,20 @@ export const ScreenLayout = ({
   header,
   style,
 }: ScreenLayoutProps) => {
+  const insets = useSafeAreaInsets();
+
   return (
-    <View style={[styles.container, style]}>
-      {header === null ? null : <Header {...header} />}
+    <View
+      style={[
+        styles.container,
+        {
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
+        },
+        style,
+      ]}
+    >
+      {header && <Header {...header} />}
       {children}
     </View>
   );

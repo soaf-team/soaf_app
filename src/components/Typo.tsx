@@ -1,10 +1,10 @@
 import React from "react";
 import { StyleProp, Text, TextStyle } from "react-native";
+import { token } from "constants/token";
 
 type Props = {
   children: React.ReactNode;
-  weight?: "regular" | "medium" | "bold";
-  size?: number;
+  variant?: keyof typeof token.typo;
   color?: string;
   style?: StyleProp<TextStyle>;
   align?: "left" | "center" | "right";
@@ -12,8 +12,7 @@ type Props = {
 
 export const Typo = ({
   children,
-  weight = "regular",
-  size = 14,
+  variant = "body1",
   color = "#121212",
   style,
   align,
@@ -22,11 +21,9 @@ export const Typo = ({
     <Text
       style={[
         {
-          fontFamily: PRETENDARD_FONT_FAMILY[weight],
-          fontSize: size,
+          ...token.typo[variant],
           color: color,
           textAlign: align,
-          lineHeight: size * 1.5,
         },
         style,
       ]}
@@ -34,10 +31,4 @@ export const Typo = ({
       {children}
     </Text>
   );
-};
-
-const PRETENDARD_FONT_FAMILY = {
-  regular: "Pretendard-Regular",
-  medium: "Pretendard-Medium",
-  bold: "Pretendard-Bold",
 };

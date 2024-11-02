@@ -5,7 +5,7 @@ import { token } from "constants/token";
 type Props = {
   children: React.ReactNode;
   variant?: keyof typeof token.typo;
-  color?: string;
+  color?: keyof typeof token.color;
   style?: StyleProp<TextStyle>;
   align?: "left" | "center" | "right";
 };
@@ -13,7 +13,7 @@ type Props = {
 export const Typo = ({
   children,
   variant = "body1",
-  color = "#121212",
+  color = "black",
   style,
   align,
 }: Props) => {
@@ -22,7 +22,7 @@ export const Typo = ({
       style={[
         {
           ...token.typo[variant],
-          color: color,
+          color: token.color[color],
           textAlign: align,
         },
         style,

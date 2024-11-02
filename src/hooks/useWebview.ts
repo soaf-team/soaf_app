@@ -55,8 +55,7 @@ export const useWebview = (webViewRef: RefObject<WebView<{}>>) => {
         logout();
         break;
       case "SIGN_OUT":
-        await signOut();
-        logout();
+        Promise.all([signOut(), logout()]);
         break;
       default:
         break;

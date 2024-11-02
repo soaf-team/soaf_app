@@ -3,11 +3,13 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { Image, Platform, StyleSheet, View } from "react-native";
 import { LINK } from "constants/link";
 
-import { DiaryCalendarScreen } from "screens/diary-calendar";
-import { DiaryStaticsScreen } from "screens/DiaryStatics";
-import { SoafExploreScreen } from "screens/SoafExplore";
-import { ChatScreen } from "screens/Chat";
-import { MyHomeScreen } from "screens/MyHome";
+import {
+  DiaryCalendarScreen,
+  DiaryStaticsScreen,
+  SoafExploreScreen,
+  ChatScreen,
+  MyHomeScreen,
+} from "screens";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const mainRoutes = [

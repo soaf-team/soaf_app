@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type ScreenLayoutProps = {
   children: React.ReactNode;
-  header?: HeaderProps;
+  header?: HeaderProps | null;
   style?: StyleProp<ViewStyle>;
 };
 
@@ -27,7 +27,7 @@ export const ScreenLayout = ({
         style,
       ]}
     >
-      {header && <Header {...header} />}
+      {header === null ? null : <Header {...header} />}
       {children}
     </View>
   );

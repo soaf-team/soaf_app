@@ -1,7 +1,7 @@
 import React from "react";
 import { Image, StyleSheet, View } from "react-native";
-import { PrimaryButton } from "./PrimaryButton";
-import { Typo } from "./Typo";
+import { PrimaryButton } from "../PrimaryButton";
+import { Typo } from "../Typo";
 
 type Props = {
   title: string;
@@ -20,10 +20,10 @@ export const ErrorFallback = ({
     <View style={styles.container}>
       <View style={styles.content}>
         <Image source={require("assets/warn.png")} style={styles.image} />
-        <Typo weight="bold" size={22} align="center">
+        <Typo variant="head3" align="center">
           {title}
         </Typo>
-        <Typo size={18} weight="medium" align="center" color="#8a91ab">
+        <Typo variant="label2" align="center" color="grey300">
           {description}
         </Typo>
       </View>

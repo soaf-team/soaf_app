@@ -5,7 +5,7 @@ type Props = {
   onPress: () => void;
 };
 
-export const SystemErrorScreen = ({ onPress }: Props) => {
+export const SystemErrorFallback = ({ onPress }: Props) => {
   return (
     <ErrorFallback
       title="시스템 오류가 발생했어요"

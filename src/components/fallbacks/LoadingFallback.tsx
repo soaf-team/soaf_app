@@ -6,7 +6,7 @@ type Props = {
   isLoading: boolean;
 };
 
-export const LoadingScreen = ({ isLoading }: Props) => {
+export const LoadingFallback = ({ isLoading }: Props) => {
   if (!isLoading) return null;
 
   return (

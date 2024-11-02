@@ -1,5 +1,6 @@
 import { StackNavigationProp } from "@react-navigation/stack";
 import { OauthType } from "./global";
+import type * as DiaryCalendarScreens from "../screens/diary-calendar";
 
 type SignupParams = {
   password: string;
@@ -9,6 +10,9 @@ type SignupParams = {
 };
 
 export type RootStackParamList = {
+  [K in keyof typeof DiaryCalendarScreens]: undefined;
+} & {
+  MainScreen: undefined;
   LoginScreen: undefined;
   AgreementScreen: SignupParams;
   RegisterNicknameScreen: SignupParams;

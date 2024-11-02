@@ -3,16 +3,49 @@ import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { RippleButton, Typo } from "components";
 import { AuthContext } from "providers/AuthContextProvider";
 import React, { useContext, useState } from "react";
-import { Image, Platform, StyleSheet, View } from "react-native";
+import { Alert, Image, Platform, StyleSheet, View } from "react-native";
 import NaverLogin from "@react-native-seoul/naver-login";
 import { axiosInstance, login } from "apis";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationType } from "types/navigation";
-import { setTokenToStorage } from "utils";
-import { getUserProfile } from "apis/getUserProfile";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { postFCMToken } from "apis/postFCMToken";
+import { setAsyncStorage, setTokenToStorage } from "utils";
 import appleAuth from "@invertase/react-native-apple-authentication";
+import { token } from "constants/token";
+import { STORAGE_KEYS } from "constants/key";
+
+const OAUTH_TYPE = {
+  kakao: {
+    text: "카카오로 시작하기",
+    icon: require("assets/images/kakao.png"),
+    backgroundColor: "#FEE500",
+    borderColor: "#FEE500",
+    color: "black",
+  },
+  apple: {
+    text: "애플로 시작하기",
+    icon: require("assets/images/apple.png"),
+    backgroundColor: "#000000",
+    borderColor: "#000000",
+    color: "white",
+  },
+  google: {
+    text: "구글로 시작하기",
+    icon: require("assets/images/google.png"),
+    backgroundColor: "#FFFFFF",
+    borderColor: "#8A91AB20",
+    color: "black",
+  },
+  naver: {
+    text: "네이버로 시작하기",
+    icon: require("assets/images/naver.png"),
+    backgroundColor: "#03C75A",
+    borderColor: "#03C75A",
+    color: "white",
+  },
+};
+
+const WELCOME_MESSAGE = "소프에 오신것을\n환영해요!";
+const WELCOME_DESCRIPTION = "감정과 취향이 맞는 소울프렌드를 찾아보세요";
 
 GoogleSignin.configure({
   scopes: ["email"],
@@ -28,37 +61,6 @@ NaverLogin.initialize({
   disableNaverAppAuthIOS: true,
 });
 
-const OAUTH_TYPE = {
-  kakao: {
-    text: "카카오로 시작하기",
-    icon: require("assets/images/kakao.png"),
-    backgroundColor: "#FEE500",
-    borderColor: "#FEE500",
-    color: "#121212",
-  },
-  apple: {
-    text: "애플로 시작하기",
-    icon: require("assets/images/apple.png"),
-    backgroundColor: "#000000",
-    borderColor: "#000000",
-    color: "#FFFFFF",
-  },
-  google: {
-    text: "구글로 시작하기",
-    icon: require("assets/images/google.png"),
-    backgroundColor: "#FFFFFF",
-    borderColor: "#8A91AB20",
-    color: "#121212",
-  },
-  naver: {
-    text: "네이버로 시작하기",
-    icon: require("assets/images/naver.png"),
-    backgroundColor: "#03C75A",
-    borderColor: "#03C75A",
-    color: "#FFFFFF",
-  },
-};
-
 type OauthType = "kakao" | "apple" | "google" | "naver";
 
 export const LoginScreen = () => {
@@ -71,8 +73,6 @@ export const LoginScreen = () => {
       requestedOperation: appleAuth.Operation.LOGIN,
       requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
     });
-
-    console.log(appleAuthRequestResponse);
 
     return {
       accessToken: appleAuthRequestResponse.identityToken,
@@ -166,40 +166,35 @@ export const LoginScreen = () => {
         email,
         oAuthType,
       });
-      const { resultCase, accessToken, refreshToken, password } = response;
+      const resultCase = response.resultCase;
 
-      if (resultCase === "join") {
-        navigation.navigate("AgreementScreen", {
-          email,
-          password: password!,
-          sns: oAuthType,
-          token: oAuthToken,
-        });
-        setIsLoading(false);
-        return;
-      } else if (resultCase === "login") {
-        axiosInstance.defaults.headers["x-access-token"] = accessToken!;
-        axiosInstance.defaults.headers["x-refresh-token"] = refreshToken!;
-
-        const userInfo = await getUserProfile();
-        const userId = userInfo.id;
-        const fcmToken = await AsyncStorage.getItem("fcmToken");
-
-        if (fcmToken) {
-          await postFCMToken({
-            userId,
-            deviceToken: fcmToken,
-            deviceType: Platform.OS as "ios" | "android",
+      switch (resultCase) {
+        case "join":
+          navigation.navigate("AgreementScreen", {
+            email,
+            password: response.password,
+            sns: oAuthType,
+            token: oAuthToken,
           });
-        }
+          setIsLoading(false);
+          return;
 
-        await setTokenToStorage(accessToken!, refreshToken!);
+        case "login":
+          axiosInstance.defaults.headers["x-access-token"] =
+            response.accessToken;
+          axiosInstance.defaults.headers["x-refresh-token"] =
+            response.refreshToken;
 
-        setIsValidUser(true);
-        return;
-      } else if (resultCase === "sns") {
-        return;
-        setIsValidUser(true);
+          await Promise.all([
+            setAsyncStorage(STORAGE_KEYS.PREV_LOGGED_IN_OAUTH, oAuthType),
+            setTokenToStorage(response.accessToken, response.refreshToken),
+          ]);
+
+          setIsValidUser(true);
+          return;
+        case "sns":
+          Alert.alert("이미 소프에 가입된 이메일입니다.");
+          return;
       }
     } catch (error) {
       console.error(error);
@@ -216,14 +211,11 @@ export const LoginScreen = () => {
           source={require("assets/images/emotion-group.png")}
           style={styles.image}
         />
-        <Typo
-          size={22}
-          weight="bold"
-          align="center"
-          color="#121212"
-        >{`소프에 오신것을\n환영해요!`}</Typo>
-        <Typo size={16} weight="medium" align="center" color="#A7ACBD">
-          감정과 취향이 맞는 소울프렌드를 찾아보세요
+        <Typo variant="head3" align="center" color="black">
+          {WELCOME_MESSAGE}
+        </Typo>
+        <Typo variant="label2" align="center" color="grey200">
+          {WELCOME_DESCRIPTION}
         </Typo>
       </View>
       <View style={styles.oauthContainer}>
@@ -275,7 +267,10 @@ const OauthButton = ({ oAuthType, onPress, isLoading }: OauthButtonProps) => {
       disabled={isLoading}
     >
       <Image source={OAUTH_TYPE[oAuthType].icon} style={styles.oauthIcon} />
-      <Typo size={16} weight="bold" color={OAUTH_TYPE[oAuthType].color}>
+      <Typo
+        variant="head6b"
+        color={OAUTH_TYPE[oAuthType].color as keyof typeof token.color}
+      >
         {OAUTH_TYPE[oAuthType].text}
       </Typo>
     </RippleButton>

@@ -1,21 +1,25 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { login } from "apis";
-import { postFCMToken } from "apis/postFCMToken";
 import { signup } from "apis/signup";
 import { PrimaryButton, ScreenLayout, Typo } from "components";
-import { useState } from "react";
+import React, { useState } from "react";
 import {
+  Alert,
   Image,
-  Platform,
   StyleSheet,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { OauthType } from "types/global";
 import { StackNavigationType } from "types/navigation";
 import { setTokenToStorage } from "utils";
+import { getErrorMessage } from "utils/getErrorMessage";
+
+const TITLE = "어떻게 불러드리는게\n좋을까요?";
+const INPUT_LABEL = "닉네임";
+const INPUT_PLACEHOLDER = "사용할 닉네임을 적어주세요.";
+const INPUT_MAX_LENGTH = 10;
+const BUTTON_TITLE = "완료";
 
 type RegisterNicknameScreenProps = {
   navigation: StackNavigationType;
@@ -52,118 +56,110 @@ export const RegisterNicknameScreen = ({
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      console.log(nickname, password, email, sns);
-      const response = await signup({ name: nickname, password, email, sns });
+      await signup({ name: nickname, password, email, sns });
 
-      const { accessToken, refreshToken } = await login({
+      const response = await login({
         oAuthToken: token!,
         email,
         oAuthType: sns,
       });
+      const resultCase = response.resultCase;
 
-      if (!accessToken || !refreshToken) {
-        throw new Error("No tokens found in response headers");
-      }
-
-      setTokenToStorage(accessToken, refreshToken);
-
-      const { _id } = response;
-      const fcmToken = await AsyncStorage.getItem("fcmToken");
-      if (fcmToken) {
-        await postFCMToken({
-          userId: _id,
-          deviceToken: fcmToken,
-          deviceType: Platform.OS as "ios" | "android",
+      if (resultCase === "login") {
+        await setTokenToStorage(response.accessToken, response.refreshToken);
+        navigation.navigate("SignupCompleteScreen", {
+          nickname,
         });
+      } else {
+        Alert.alert("로그인에 실패했습니다.");
       }
-      navigation.navigate("SignupCompleteScreen", {
-        nickname,
-      });
-    } catch (error) {
-      console.error(error.response);
+    } catch (error: unknown) {
+      Alert.alert("로그인에 실패했습니다.", getErrorMessage(error));
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-      <ScreenLayout>
-        <View style={styles.headingContainer}>
-          <Typo size={22} weight="bold" style={{ lineHeight: 40 }}>
-            {`어떻게 불러드리는게\n좋을까요?`}
-          </Typo>
+    <ScreenLayout>
+      <View style={styles.headingContainer}>
+        <Typo variant="head3" style={{ lineHeight: 40 }}>
+          {TITLE}
+        </Typo>
+      </View>
+      <View style={styles.inputGroupContainer}>
+        <Typo variant="label3" color="grey400">
+          {INPUT_LABEL}
+        </Typo>
+        <View
+          style={[
+            styles.inputContainer,
+            {
+              borderColor: isFocused ? "#57C2FF" : "#E0E0E0",
+            },
+          ]}
+        >
+          <TextInput
+            value={nickname}
+            onChangeText={handleNicknameChange}
+            placeholder={INPUT_PLACEHOLDER}
+            placeholderTextColor="#A7ACBD"
+            style={styles.input}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            cursorColor="#57C2FF60"
+          />
+          {nickname.length > 0 && (
+            <TouchableOpacity onPress={handleResetNickname} activeOpacity={1}>
+              <Image
+                source={require("assets/images/text-reset.png")}
+                style={{
+                  width: 20,
+                  height: 20,
+                }}
+              />
+            </TouchableOpacity>
+          )}
         </View>
-        <View style={styles.inputGroupContainer}>
-          <Typo size={14} weight="medium" color="#6D7592">
-            닉네임
-          </Typo>
-          <View
-            style={[
-              styles.inputContainer,
-              {
-                borderColor: isFocused ? "#57C2FF" : "#E0E0E0",
-              },
-            ]}
-          >
-            <TextInput
-              value={nickname}
-              onChangeText={handleNicknameChange}
-              placeholder="사용할 닉네임을 적어주세요."
-              placeholderTextColor="#A7ACBD"
-              style={styles.input}
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
-              cursorColor="#57C2FF60"
-            />
-            {nickname.length > 0 && (
-              <TouchableOpacity onPress={handleResetNickname} activeOpacity={1}>
+        <View style={styles.bottomTextContainer}>
+          <View style={styles.warningTextContainer}>
+            {!!errorMessage && (
+              <React.Fragment>
                 <Image
-                  source={require("assets/images/text-reset.png")}
-                  style={{
-                    width: 20,
-                    height: 20,
-                  }}
+                  source={require("assets/images/alert-circle.png")}
+                  style={styles.warnIcon}
                 />
-              </TouchableOpacity>
+                <Typo variant="label4" color="red">
+                  {errorMessage}
+                </Typo>
+              </React.Fragment>
             )}
           </View>
-          <View style={styles.bottomTextContainer}>
-            <View style={styles.warningTextContainer}>
-              {!!errorMessage && (
-                <>
-                  <Image
-                    source={require("assets/images/alert-circle.png")}
-                    style={styles.warnIcon}
-                  />
-                  <Typo size={12} weight="medium" color="#FF3737">
-                    {errorMessage}
-                  </Typo>
-                </>
-              )}
-            </View>
-            <Typo
-              size={14}
-              weight="medium"
-              align="right"
-              style={{
-                paddingVertical: 7,
-              }}
-            >
-              <Typo color="#8A91AB">{nickname.length}/</Typo>10
+          <Typo
+            variant="label3"
+            align="right"
+            color="grey300"
+            style={{
+              paddingTop: 4,
+              paddingBottom: 8,
+            }}
+          >
+            {nickname.length}/
+            <Typo variant="label3" color="black">
+              {INPUT_MAX_LENGTH}
             </Typo>
-          </View>
+          </Typo>
         </View>
-        <View style={styles.buttonContainer}>
-          <PrimaryButton
-            title="완료"
-            onPress={handleSubmit}
-            disabled={nickname.length < 2}
-            isLoading={isSubmitting}
-          />
-        </View>
-      </ScreenLayout>
-    </SafeAreaView>
+      </View>
+      <View style={styles.buttonContainer}>
+        <PrimaryButton
+          title={BUTTON_TITLE}
+          onPress={handleSubmit}
+          disabled={nickname.length < 2}
+          isLoading={isSubmitting}
+        />
+      </View>
+    </ScreenLayout>
   );
 };
 

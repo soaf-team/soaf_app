@@ -3,6 +3,11 @@ import { AuthContext } from "providers/AuthContextProvider";
 import { useContext } from "react";
 import { Image, StyleSheet, View } from "react-native";
 
+const WELCOME = "님 환영합니다!";
+const WELCOME_DESCRIPTION =
+  "님의 첫 일기를 작성하고\n소울프렌드를 찾아 볼까요?";
+const BUTTON_TITLE = "소프 시작하기";
+
 type SignupCompleteScreenProps = {
   route: {
     params: {
@@ -26,15 +31,13 @@ export const SignupCompleteScreen = ({ route }: SignupCompleteScreenProps) => {
           source={require("assets/images/complete.png")}
           style={styles.completeImage}
         />
-        <Typo size={22} weight="bold">
-          {nickname}님 환영합니다!
-        </Typo>
-        <Typo size={16} weight="medium" align="center" color="#A7ACBD">
-          {`${nickname}님의 첫 일기를 작성하고\n소울프렌드를 찾아 볼까요?`}
+        <Typo variant="head3">{nickname + WELCOME}</Typo>
+        <Typo variant="body2m" align="center" color="grey300">
+          {nickname + WELCOME_DESCRIPTION}
         </Typo>
       </View>
       <View style={styles.buttonContainer}>
-        <PrimaryButton title="완료" onPress={handleStartButtonPress} />
+        <PrimaryButton title={BUTTON_TITLE} onPress={handleStartButtonPress} />
       </View>
     </ScreenLayout>
   );

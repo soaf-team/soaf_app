@@ -61,7 +61,7 @@ export const PrimaryButton = ({
           {!disabled && isLoading ? (
             <LoadingDots />
           ) : (
-            <Typo size={18} weight="bold" color="white">
+            <Typo variant="button" color="white">
               {title}
             </Typo>
           )}

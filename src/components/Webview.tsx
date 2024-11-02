@@ -1,22 +1,23 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from "react";
 import {
   WebView as WebViewNative,
   WebViewNavigation,
-} from 'react-native-webview';
-import SplashScreen from 'react-native-splash-screen';
+} from "react-native-webview";
+import SplashScreen from "react-native-splash-screen";
 
 import {
   useWebviewBackHandler,
   useWebview,
   useDebounce,
   useKeyboardHeight,
-} from 'hooks';
+} from "hooks";
 
-import { LoadingScreen, NetworkErrorScreen } from './fallbacks';
-import { getAsyncStorage } from 'utils';
-import { ACCESS_TOKEN, REFRESH_TOKEN } from 'constants/key';
-import { View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { getAsyncStorage } from "utils";
+
+import { View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { NetworkErrorFallback, LoadingFallback } from "components";
+import { STORAGE_KEYS } from "constants/key";
 
 type WebViewContainerProps = {
   url: string;
@@ -42,13 +43,13 @@ export const Webview = ({ url }: WebViewContainerProps) => {
     try {
       setIsLoading(true);
       const [accessToken, refreshToken] = await Promise.all([
-        getAsyncStorage(ACCESS_TOKEN),
-        getAsyncStorage(REFRESH_TOKEN),
+        getAsyncStorage(STORAGE_KEYS.ACCESS_TOKEN),
+        getAsyncStorage(STORAGE_KEYS.REFRESH_TOKEN),
       ]);
 
       sendMessageToWeb({ accessToken, refreshToken });
     } catch (error) {
-      console.error('error', error);
+      console.error("error", error);
     } finally {
       setIsLoading(false);
       SplashScreen.hide();
@@ -72,13 +73,13 @@ export const Webview = ({ url }: WebViewContainerProps) => {
 
   if (loadError) {
     SplashScreen.hide();
-    return <NetworkErrorScreen onPress={reloadWebView} />;
+    return <NetworkErrorFallback onPress={reloadWebView} />;
   }
 
   const style =
-    currentUrl.includes('diary/write/step3/') ||
-    currentUrl.includes('diary/edit/') ||
-    (currentUrl.includes('chat/room/') && isKeyboardVisible)
+    currentUrl.includes("diary/write/step3/") ||
+    currentUrl.includes("diary/edit/") ||
+    (currentUrl.includes("chat/room/") && isKeyboardVisible)
       ? { height: screenHeight }
       : { flex: 1 };
 
@@ -86,7 +87,7 @@ export const Webview = ({ url }: WebViewContainerProps) => {
     <View style={style}>
       <WebViewNative
         ref={webViewRef}
-        originWhitelist={['*']}
+        originWhitelist={["*"]}
         source={{ uri: urlWithSafeArea }}
         onMessage={getMessageFromWeb}
         onLoad={debouncedHandleOnLoad}
@@ -138,7 +139,7 @@ export const Webview = ({ url }: WebViewContainerProps) => {
         dataDetectorTypes="none"
         scrollEnabled={!isKeyboardVisible}
       />
-      <LoadingScreen isLoading={isLoading} />
+      <LoadingFallback isLoading={isLoading} />
     </View>
   );
 };

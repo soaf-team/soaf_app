@@ -1,11 +1,6 @@
 import React from "react";
-import { ScreenLayout } from "components";
-import { Text } from "react-native";
+import { Webview } from "components";
 
 export const DiaryCalendarScreen = () => {
-  return (
-    <ScreenLayout header={{ title: "일기 캘린더" }}>
-      <Text>일기 캘린더</Text>
-    </ScreenLayout>
-  );
+  return <Webview url={`https://soaf-web.vercel.app/diary/calendar/`} />;
 };

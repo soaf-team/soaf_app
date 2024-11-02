@@ -153,4 +153,7 @@ export const token = {
     red: "#ff3c3c",
     border: "#8a91a8",
   },
+  spacing: {
+    side: 18,
+  },
 };

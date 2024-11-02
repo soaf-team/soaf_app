@@ -1,4 +1,4 @@
-import { ErrorFallback } from "components";
+import { ErrorFallback } from "components/fallbacks/ErrorFallback";
 import React from "react";
 
 type Props = {

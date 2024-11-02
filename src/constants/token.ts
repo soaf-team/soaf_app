@@ -2,7 +2,7 @@ export const token = {
   typo: {
     button: {
       fontSize: 18,
-      lineHeight: 14,
+      lineHeight: 24,
       fontFamily: "Pretendard-Bold",
     },
     body5: {

@@ -1,7 +1,7 @@
 import React from "react";
 import { Image, StyleSheet, View } from "react-native";
-import { PrimaryButton } from "../PrimaryButton";
-import { Typo } from "../Typo";
+import { PrimaryButton } from "../ui/PrimaryButton";
+import { Typo } from "../ui/Typo";
 
 type Props = {
   title: string;

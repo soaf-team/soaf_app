@@ -3,7 +3,7 @@ import { Animated, StyleSheet } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import { Typo } from "./Typo";
 import { TouchableRipple } from "react-native-paper";
-import { LoadingDots } from "./LoadingDots";
+import { LoadingDots } from "../fallbacks/LoadingDots";
 
 type Props = {
   onPress: () => void;

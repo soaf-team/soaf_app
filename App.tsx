@@ -1,13 +1,14 @@
 import { ProviderGroup } from "providers";
 import { CheckerGroup } from "checkers";
 import { StatusBar } from "react-native";
-import { ErrorBoundary, SystemErrorFallback } from "components";
+import { ErrorBoundary } from "components/ErrorBoundary";
+import { SystemErrorFallback } from "components/fallbacks/SystemErrorFallback";
+import { Webview } from "components/Webview";
 import SplashScreen from "react-native-splash-screen";
 import { usePretendardFont, usePushNotification } from "hooks";
-import { MainStack } from "navigation/MainStack";
 
 const App = () => {
-  usePushNotification();
+  const { currentUrl } = usePushNotification();
   usePretendardFont();
 
   return (
@@ -21,7 +22,7 @@ const App = () => {
       <ProviderGroup>
         <StatusBar barStyle="dark-content" backgroundColor="#fff" />
         <CheckerGroup>
-          <MainStack />
+          <Webview url={currentUrl} />
         </CheckerGroup>
       </ProviderGroup>
     </ErrorBoundary>

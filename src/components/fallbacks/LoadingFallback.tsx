@@ -1,4 +1,4 @@
-import { LoadingSpinner } from "components";
+import { LoadingSpinner } from "components/fallbacks/LoadingSpinner";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 

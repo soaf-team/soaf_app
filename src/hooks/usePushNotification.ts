@@ -1,7 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import messaging from "@react-native-firebase/messaging";
 import notifee, { AndroidImportance } from "@notifee/react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { WEBVIEW_BASE_URL } from "constants/url";
 
 messaging().setBackgroundMessageHandler(async (remoteMessage) => {
   const title = remoteMessage.notification?.title;
@@ -35,6 +36,8 @@ const onDisplayNotification = async ({
 };
 
 export function usePushNotification() {
+  const [currentUrl, setCurrentUrl] = useState<string>(WEBVIEW_BASE_URL);
+
   async function getFCMToken() {
     try {
       await messaging().requestPermission();
@@ -53,9 +56,12 @@ export function usePushNotification() {
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
       const title = remoteMessage.notification?.title;
       const body = remoteMessage.notification?.body;
+      // setCurrentUrl(remoteMessage.notification?.link);
       await onDisplayNotification({ title, body });
     });
 
     return unsubscribe;
   }, []);
+
+  return { currentUrl };
 }

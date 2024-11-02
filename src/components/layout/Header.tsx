@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import { Typo } from "components/Typo";
+import { Typo } from "components/ui/Typo";
 import React from "react";
 import {
   Image,

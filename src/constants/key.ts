@@ -1,6 +1,7 @@
-const ACCESS_TOKEN = "accessToken";
-const REFRESH_TOKEN = "refreshToken";
-const EMAIL = "email";
-const OAUTH = "oAuthType";
-
-export { ACCESS_TOKEN, REFRESH_TOKEN, EMAIL, OAUTH };
+export const STORAGE_KEYS = {
+  ACCESS_TOKEN: "accessToken",
+  REFRESH_TOKEN: "refreshToken",
+  EMAIL: "email",
+  OAUTH: "oAuthType",
+  PREV_LOGGED_IN_OAUTH: "prevLoggedInOAuth",
+};

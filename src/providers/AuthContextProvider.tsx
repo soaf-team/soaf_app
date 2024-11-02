@@ -1,4 +1,4 @@
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "constants/key";
+import { STORAGE_KEYS } from "constants/key";
 import React, { createContext, useEffect, useState } from "react";
 import { getAsyncStorage, removeAsyncStorage } from "utils";
 
@@ -22,16 +22,16 @@ export const AuthContextProvider = ({
   const [isValidUser, setIsValidUser] = useState<boolean>(false);
 
   const logout = async () => {
-    await removeAsyncStorage(ACCESS_TOKEN);
-    await removeAsyncStorage(REFRESH_TOKEN);
+    await removeAsyncStorage(STORAGE_KEYS.ACCESS_TOKEN);
+    await removeAsyncStorage(STORAGE_KEYS.REFRESH_TOKEN);
     setIsValidUser(false);
   };
 
   const checkAuth = async () => {
     try {
       const [accessToken, refreshToken] = await Promise.all([
-        getAsyncStorage(ACCESS_TOKEN),
-        getAsyncStorage(REFRESH_TOKEN),
+        getAsyncStorage(STORAGE_KEYS.ACCESS_TOKEN),
+        getAsyncStorage(STORAGE_KEYS.REFRESH_TOKEN),
       ]);
 
       if (!accessToken || !refreshToken) return;

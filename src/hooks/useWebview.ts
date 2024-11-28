@@ -1,3 +1,4 @@
+import { Asset } from 'react-native-image-picker';
 import { signOut } from 'apis/signout';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from 'constants/key';
 import { AuthContext } from 'providers/AuthContextProvider';
@@ -5,15 +6,15 @@ import { RefObject, useContext } from 'react';
 import WebView, { WebViewMessageEvent } from 'react-native-webview';
 import { setAsyncStorage, openAlbum, openCamera } from 'utils';
 
-const albumHandlers = (base64Array: string[] | undefined, data: any) => {
+const albumHandlers = (assets: (string | Asset)[] | undefined, data: any) => {
   const category = data.category;
 
-  if (!base64Array) return;
+  if (!assets) return;
 
   if (category === 'CHAT') {
     return {
       type: 'SELECTED_IMAGES',
-      imageArray: base64Array,
+      imageArray: assets,
       category: 'CHAT',
       roomId: data,
     };
@@ -21,7 +22,7 @@ const albumHandlers = (base64Array: string[] | undefined, data: any) => {
 
   return {
     type: 'SELECTED_IMAGES',
-    imageArray: base64Array,
+    imageArray: assets,
     category: 'DIARY',
   };
 };
@@ -54,9 +55,9 @@ export const useWebview = (webViewRef: RefObject<WebView<{}>>) => {
         });
         break;
       case 'OPEN_ALBUM':
-        const base64Array = await openAlbum();
-
-        sendMessageToWeb(albumHandlers(base64Array, nativeEvent.data));
+        const photoList = await openAlbum(nativeEvent.data.category);
+        console.log(photoList);
+        sendMessageToWeb(albumHandlers(photoList, nativeEvent.data));
         break;
       case 'REFRESH_TOKEN':
         const { accessToken, refreshToken } = nativeEvent.data;

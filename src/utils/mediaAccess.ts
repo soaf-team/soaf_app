@@ -28,9 +28,10 @@ export const openCamera = async (): Promise<string | null> => {
       } else {
         if (response.assets && response.assets.length > 0) {
           try {
-            const base64Image = await resizeAndCompressImage(
-              response.assets[0]
-            );
+            const base64Image = (await processImage(
+              response.assets[0],
+              'CHAT'
+            )) as string;
             resolve(base64Image);
           } catch (error) {
             console.error('Error processing camera image:', error);
@@ -48,29 +49,35 @@ export const openCamera = async (): Promise<string | null> => {
 const BASE_SIZE = 1024000; // 1MB (썸네일 작업 유무 기준 사이즈)
 const COMP_SIZE = 512000; // 500KB (썸네일 작업 결과물 목표 사이즈)
 
-const resizeAndCompressImage = async (image: Asset): Promise<string> => {
+type AssetWithThumbnail = Asset & {
+  thumbnailUri: string;
+};
+
+const processImage = async (
+  image: Asset,
+  category: string
+): Promise<string | AssetWithThumbnail> => {
   if (!image.uri) {
     console.error('Image URI is undefined');
     return '';
   }
 
   try {
-    // 파일 크기 확인
     const fileInfo = await RNFS.stat(image.uri);
     const fileSize = fileInfo.size;
 
     if (fileSize <= BASE_SIZE) {
-      // 기준 크기 이하면 원본 반환
+      if (category === 'DIARY') {
+        return (await createThumbnail(image)) as AssetWithThumbnail;
+      }
       const base64 = await RNFS.readFile(image.uri, 'base64');
       return `data:${image.type || 'image/jpeg'};base64,${base64}`;
     }
 
-    // 리사이징 비율 계산
     const ratio = Math.sqrt(fileSize / COMP_SIZE);
     const width = image.width ? Math.round(image.width / ratio) : 1024;
     const height = image.height ? Math.round(image.height / ratio) : 1024;
 
-    // 이미지 리사이징
     const resizedImage = await ImageResizer.createResizedImage(
       image.uri,
       width,
@@ -83,21 +90,61 @@ const resizeAndCompressImage = async (image: Asset): Promise<string> => {
       { mode: 'contain', onlyScaleDown: true }
     );
 
-    // 리사이즈된 이미지를 base64로 변환
+    if (category === 'DIARY') {
+      return (await createThumbnail({
+        ...image,
+        uri: resizedImage.uri,
+        width: resizedImage.width,
+        height: resizedImage.height,
+      })) as AssetWithThumbnail;
+    }
+
     const base64 = await RNFS.readFile(resizedImage.uri, 'base64');
     return `data:image/jpeg;base64,${base64}`;
   } catch (error) {
-    console.error('Error resizing image:', error);
+    console.error('Error processing image:', error);
     return '';
   }
 };
 
-const openAlbumOriginal = async (): Promise<Asset[] | null> => {
+const createThumbnail = async (imageData: Asset) => {
+  if (!imageData.uri) {
+    console.error('Image URI is undefined');
+    return '';
+  }
+
+  try {
+    // 썸네일 크기로 리사이징
+    const resized = await ImageResizer.createResizedImage(
+      imageData.uri,
+      200, // 썸네일 너비
+      200, // 썸네일 높이
+      'JPEG',
+      80,
+      0,
+      undefined,
+      false,
+      { mode: 'contain' }
+    );
+
+    // base64로 변환
+    const base64 = await RNFS.readFile(resized.uri, 'base64');
+    return {
+      ...imageData,
+      thumbnailUri: `data:image/jpeg;base64,${base64}`,
+    };
+  } catch (error) {
+    console.error('Error creating thumbnail:', error);
+    return imageData;
+  }
+};
+
+const openAlbumOriginal = async (category: string): Promise<Asset[] | null> => {
   return new Promise((resolve, reject) => {
     const options: ImageLibraryOptions = {
       mediaType: 'photo',
       quality: 1,
-      selectionLimit: 10,
+      selectionLimit: category === 'DIARY' ? 5 : 4,
     };
 
     launchImageLibrary(options, (response: ImagePickerResponse) => {
@@ -118,16 +165,16 @@ const openAlbumOriginal = async (): Promise<Asset[] | null> => {
   });
 };
 
-export const openAlbum = async () => {
+export const openAlbum = async (category: string) => {
   try {
-    const selectedImages = await openAlbumOriginal();
+    const selectedImages = await openAlbumOriginal(category);
     if (selectedImages && selectedImages.length > 0) {
-      const base64Array = await Promise.all(
-        selectedImages.map(resizeAndCompressImage)
+      const processedImages = await Promise.all(
+        selectedImages.map((image) => processImage(image, category))
       );
-      return base64Array.filter((base64) => base64 !== ''); // 빈 문자열 제거
+      return processedImages.filter((result) => result !== '');
     } else {
-      console.log('No images selected');
+      return [];
     }
   } catch (error) {
     console.error('Error processing images:', error);

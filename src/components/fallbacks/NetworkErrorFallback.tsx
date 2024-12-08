@@ -1,11 +1,11 @@
-import { ErrorFallback } from "components";
+import { ErrorFallback } from "./ErrorFallback";
 import React from "react";
 
 type Props = {
   onPress: () => void;
 };
 
-export const NetworkErrorScreen = ({ onPress }: Props) => {
+export const NetworkErrorFallback = ({ onPress }: Props) => {
   return (
     <ErrorFallback
       title="현재 연결이 불안해요"

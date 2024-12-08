@@ -1,4 +1,4 @@
-import { AuthStack } from "navigation/AuthStack";
+import { AuthStack } from "screens/public-stack/PublicStack";
 import { AuthContext } from "providers/AuthContextProvider";
 import { useContext } from "react";
 import SplashScreen from "react-native-splash-screen";

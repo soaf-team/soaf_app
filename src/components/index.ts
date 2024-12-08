@@ -1,4 +1,3 @@
-export * from "./ErrorFallback";
 export * from "./PrimaryButton";
 export * from "./Typo";
 export * from "./ErrorBoundary";
@@ -6,5 +5,6 @@ export * from "./RippleButton";
 export * from "./Header";
 export * from "./ScreenLayout";
 export * from "./MarkdownRenderer";
-export * from "./LoadingSpinner";
-export * from "./LoadingDots";
+export * from "./fallbacks/LoadingSpinner";
+export * from "./fallbacks/LoadingDots";
+export * from "./Webview";

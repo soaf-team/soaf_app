@@ -3,6 +3,7 @@ import { login } from "apis";
 import { postFCMToken } from "apis/postFCMToken";
 import { signup } from "apis/signup";
 import { PrimaryButton, ScreenLayout, Typo } from "components";
+import { LINK } from "constants/link";
 import { useState } from "react";
 import {
   Image,
@@ -14,11 +15,11 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { OauthType } from "types/global";
-import { StackNavigationType } from "types/navigation";
+import { PublicStackNavigationType } from "types/navigation";
 import { setTokenToStorage } from "utils";
 
 type RegisterNicknameScreenProps = {
-  navigation: StackNavigationType;
+  navigation: PublicStackNavigationType;
   route: {
     params: {
       password: string;
@@ -76,11 +77,11 @@ export const RegisterNicknameScreen = ({
           deviceType: Platform.OS as "ios" | "android",
         });
       }
-      navigation.navigate("SignupCompleteScreen", {
+      navigation.navigate(LINK.public.signupComplete, {
         nickname,
       });
     } catch (error) {
-      console.error(error.response);
+      console.error(error);
     } finally {
       setIsSubmitting(false);
     }

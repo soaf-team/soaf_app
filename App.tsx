@@ -2,10 +2,10 @@ import { ProviderGroup } from "providers";
 import { CheckerGroup } from "checkers";
 import { StatusBar } from "react-native";
 import { ErrorBoundary } from "components";
-import { SystemErrorScreen, Webview } from "screens";
+import { SystemErrorFallback } from "components/fallbacks";
 import SplashScreen from "react-native-splash-screen";
 import { usePretendardFont, usePushNotification } from "hooks";
-import { WEBVIEW_BASE_URL } from "constants/url";
+import { MainStack } from "screens/main-stack";
 
 const App = () => {
   usePushNotification();
@@ -16,13 +16,13 @@ const App = () => {
       renderFallback={({ error, reset }) => {
         SplashScreen.hide();
         console.error(error);
-        return <SystemErrorScreen onPress={reset} />;
+        return <SystemErrorFallback onPress={reset} />;
       }}
     >
       <ProviderGroup>
         <StatusBar barStyle="dark-content" backgroundColor="#fff" />
         <CheckerGroup>
-          <Webview url={WEBVIEW_BASE_URL} />
+          <MainStack />
         </CheckerGroup>
       </ProviderGroup>
     </ErrorBoundary>

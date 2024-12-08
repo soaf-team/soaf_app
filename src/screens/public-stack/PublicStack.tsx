@@ -3,6 +3,7 @@ import {
   StackNavigationOptions,
   TransitionPresets,
 } from "@react-navigation/stack";
+import { LINK } from "constants/link";
 import {
   AgeAgreementScreen,
   AgreementScreen,
@@ -12,15 +13,15 @@ import {
   PrivacyTransferAgreementScreen,
   SensitiveInfoAgreementScreen,
   TermsOfUseAgreementScreen,
-} from "screens/agreements";
+} from "screens/public-stack/agreements";
 import {
   LoginScreen,
   RegisterNicknameScreen,
   SignupCompleteScreen,
-} from "screens/auth";
-import { RootStackParamList } from "types/navigation";
+} from "screens/public-stack/auth";
+import { PublicStackParamList } from "types/navigation";
 
-const Stack = createStackNavigator<RootStackParamList>();
+const Stack = createStackNavigator<PublicStackParamList>();
 
 const defaultScreenOptions: StackNavigationOptions = {
   headerShown: false,
@@ -30,39 +31,45 @@ const defaultScreenOptions: StackNavigationOptions = {
 export const AuthStack: React.FC = () => {
   return (
     <Stack.Navigator screenOptions={defaultScreenOptions}>
-      <Stack.Screen name="LoginScreen" component={LoginScreen} />
-      <Stack.Screen name="AgreementScreen" component={AgreementScreen} />
+      <Stack.Screen name={LINK.public.login} component={LoginScreen} />
       <Stack.Screen
-        name="TermsOfUseAgreementScreen"
+        name={LINK.public.agreement.index}
+        component={AgreementScreen}
+      />
+      <Stack.Screen
+        name={LINK.public.agreement.termsOfUse}
         component={TermsOfUseAgreementScreen}
       />
       <Stack.Screen
-        name="PrivacyPolicyAgreementScreen"
+        name={LINK.public.agreement.privacyPolicy}
         component={PrivacyPolicyAgreementScreen}
       />
       <Stack.Screen
-        name="SensitiveInfoAgreementScreen"
+        name={LINK.public.agreement.sensitiveInfo}
         component={SensitiveInfoAgreementScreen}
       />
       <Stack.Screen
-        name="PrivacyThirdPartyAgreement"
+        name={LINK.public.agreement.privacyThirdParty}
         component={PrivacyThirdPartyAgreement}
       />
       <Stack.Screen
-        name="PrivacyTransferAgreementScreen"
+        name={LINK.public.agreement.privacyTransfer}
         component={PrivacyTransferAgreementScreen}
       />
-      <Stack.Screen name="AgeAgreementScreen" component={AgeAgreementScreen} />
       <Stack.Screen
-        name="MarketingAgreementScreen"
+        name={LINK.public.agreement.age}
+        component={AgeAgreementScreen}
+      />
+      <Stack.Screen
+        name={LINK.public.agreement.marketing}
         component={MarketingAgreementScreen}
       />
       <Stack.Screen
-        name="RegisterNicknameScreen"
+        name={LINK.public.registerNickname}
         component={RegisterNicknameScreen}
       />
       <Stack.Screen
-        name="SignupCompleteScreen"
+        name={LINK.public.signupComplete}
         component={SignupCompleteScreen}
       />
     </Stack.Navigator>

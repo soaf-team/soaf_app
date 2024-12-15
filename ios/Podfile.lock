@@ -1259,6 +1259,8 @@ PODS:
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
     - ReactCommon/turbomodule/core
+  - RNSVG (15.10.1):
+    - React-Core
   - SocketRocket (0.6.1)
   - SSZipArchive (2.5.5)
   - Yoga (1.14.0)
@@ -1342,6 +1344,7 @@ DEPENDENCIES:
   - "RNNaverLogin (from `../node_modules/@react-native-seoul/naver-login`)"
   - "RNNotifee (from `../node_modules/@notifee/react-native`)"
   - RNReanimated (from `../node_modules/react-native-reanimated`)
+  - RNSVG (from `../node_modules/react-native-svg`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -1518,6 +1521,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@notifee/react-native"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
+  RNSVG:
+    :path: "../node_modules/react-native-svg"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -1617,10 +1622,11 @@ SPEC CHECKSUMS:
   RNNaverLogin: bf75ce9f10f4a91ce9b91858ca2d3a0651f1d896
   RNNotifee: 35b5f984d11083b02d7f2990b3408cd99a0aeeac
   RNReanimated: ad2638b1631cf5622671d81aa5a8a1830b226c02
+  RNSVG: 7ff26379b2d1871b8571e6f9bc9630de6baf9bdf
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   SSZipArchive: c69881e8ac5521f0e622291387add5f60f30f3c4
   Yoga: 1b901a6d6eeba4e8a2e8f308f708691cdb5db312
 
 PODFILE CHECKSUM: f5e499bfb34ed37f128a5d280c9d08f5da81fdd8
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2

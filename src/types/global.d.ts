@@ -2,4 +2,4 @@ export type UserProfileType = {
   nickname: string;
 };
 
-export type OauthType = "kakao" | "apple" | "google" | "naver";
+export type OauthType = 'kakao' | 'apple' | 'google' | 'naver';

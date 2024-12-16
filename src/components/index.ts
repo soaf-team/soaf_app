@@ -8,3 +8,4 @@ export * from './fallbacks/LoadingSpinner';
 export * from './fallbacks/LoadingDots';
 export * from './Webview';
 export * from './layouts';
+export * from './Emotion';

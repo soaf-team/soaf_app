@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, Image, StyleSheet, Animated, Pressable } from 'react-native';
-import { MOOD_RATING_ARRAY } from 'constants/mood';
 
-type MoodRating = 1 | 2 | 3 | 4 | 5;
+import { MOOD_RATING_ARRAY } from 'constants/mood';
+import { MoodRating } from 'types/diary';
 
 type DailyRatingWidgetProps = {
   selectedRating: MoodRating | null;
@@ -64,7 +64,9 @@ export const DailyRatingWidget = ({
 
 const styles = StyleSheet.create({
   container: {
+    display: 'flex',
     flexDirection: 'row',
+    justifyContent: 'center',
     gap: 12,
   },
   imageContainer: {

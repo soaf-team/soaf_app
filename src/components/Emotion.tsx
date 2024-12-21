@@ -62,7 +62,20 @@ export const EmotionButton = ({
           >
             {EMOTIONS[emotion].label}
           </Text>
-          <View style={styles.imgContainer}>{EMOTIONS[emotion].icon}</View>
+          <View
+            style={[
+              styles.imgContainer,
+              selected
+                ? {
+                    display: 'flex',
+                  }
+                : {
+                    display: 'none',
+                  },
+            ]}
+          >
+            {EMOTIONS[emotion].icon}
+          </View>
         </View>
       </Animated.View>
     </Pressable>
@@ -101,7 +114,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 10,
-    marginBottom: 150,
+    marginBottom: 90,
   },
   buttonContainer: {
     borderRadius: 16,

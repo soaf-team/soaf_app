@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { EmotionButtonList, PageLayout, Spacing } from 'components';
+import { Button } from 'components/ui';
 import { StepBox } from './StepBox';
 
 const STEP_MAIN_MESSAGE = `좀 더 구체적인\n감정을 선택해주세요.`;
@@ -48,6 +49,7 @@ export const Step2 = () => {
         diary={diary}
         handleEmotionButtonClick={handleEmotionButtonClick}
       />
+      <Button disabled={diary.emotions.length === 0}>감정선택 완료</Button>
     </PageLayout>
   );
 };

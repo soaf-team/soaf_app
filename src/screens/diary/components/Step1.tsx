@@ -4,15 +4,23 @@ import { PageLayout, Spacing } from 'components';
 import { StepBox } from './StepBox';
 import { DailyRatingWidget } from './DailyRatingWidget';
 import { MoodRating } from 'types/diary';
+import { XIcon } from 'assets';
 
-export const Step1 = () => {
-  const [selectedRating, setSelectedRating] = useState<MoodRating | null>(null);
+interface Step1Props {
+  rating: MoodRating | null;
+  onClose: () => void;
+  onNext: (rating: MoodRating) => void;
+}
 
+export const Step1 = ({ rating, onClose, onNext }: Step1Props) => {
   return (
     <PageLayout
       header={{
         leftSlot: {
           component: '',
+        },
+        rightSlot: {
+          component: <XIcon onPress={onClose} />,
         },
       }}
     >
@@ -23,8 +31,10 @@ export const Step1 = () => {
       />
       <Spacing size={24} />
       <DailyRatingWidget
-        selectedRating={selectedRating}
-        handleSelectRating={(rating) => setSelectedRating(rating)}
+        selectedRating={rating}
+        handleSelectRating={(rating) => {
+          onNext(rating as MoodRating);
+        }}
       />
     </PageLayout>
   );

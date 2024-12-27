@@ -1,17 +1,8 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Image,
-  Animated,
-  Dimensions,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, Animated } from 'react-native';
 
 import { EMOTIONS } from 'constants/emotion';
 import { EmotionKey } from 'types/emotion';
-import { DiaryFormType } from 'types/diary';
 
 interface EmotionButtonProps {
   emotion: EmotionKey;
@@ -83,25 +74,25 @@ export const EmotionButton = ({
 };
 
 interface EmotionButtonListProps {
-  diary: DiaryFormType;
-  handleEmotionButtonClick: (emotion: EmotionKey) => void;
+  emotionList: EmotionKey[];
+  onEmotionButtonClick: (emotion: EmotionKey) => void;
 }
 
 export const EmotionButtonList = ({
-  diary,
-  handleEmotionButtonClick,
+  emotionList,
+  onEmotionButtonClick,
 }: EmotionButtonListProps) => {
   return (
     <View style={styles.container}>
       {(Object.keys(EMOTIONS) as EmotionKey[]).map((emotion) => {
-        const isSelected = diary.emotions.includes(emotion);
+        const isSelected = emotionList.includes(emotion);
 
         return (
           <EmotionButton
             key={emotion}
             emotion={emotion}
             selected={isSelected}
-            onClick={handleEmotionButtonClick}
+            onClick={onEmotionButtonClick}
           />
         );
       })}

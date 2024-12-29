@@ -6,3 +6,4 @@ export * from './usePretendardFont';
 export * from './useDebounce';
 export * from './useKeyboardHeight';
 export * from './usePressEffect';
+export * from './useFunnel';

@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import type { ReactElement } from 'react';
 
 export type EmotionKey =
   | 'happy'
@@ -15,7 +15,7 @@ export type EmotionKey =
   | 'angry';
 
 export type EmotionDetail = {
-  icon: ReactNode;
+  icon: ReactElement;
   color: string;
   noun: string;
   label: string;

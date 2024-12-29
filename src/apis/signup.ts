@@ -1,5 +1,5 @@
 import { OauthType } from "types/global";
-import { axiosInstance } from "./axios";
+import { axiosBase } from "./axios";
 
 type SignupProps = {
   email: string;
@@ -9,7 +9,7 @@ type SignupProps = {
 };
 
 export const signup = async ({ name, password, email, sns }: SignupProps) => {
-  const response = await axiosInstance.post("/user/sns-signup", {
+  const response = await axiosBase.post("/user/sns-signup", {
     name,
     password,
     email,

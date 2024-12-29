@@ -1,5 +1,5 @@
 import { OauthType } from "types/global";
-import { axiosInstance } from "./axios";
+import { axiosBase } from "./axios";
 import { extractTokensFromCookies } from "utils";
 
 type LoginResponse = {
@@ -25,7 +25,7 @@ export const login = async (payload: {
   refreshToken?: string;
   password?: string;
 }> => {
-  const response = await axiosInstance.post<APIResponse>("user/sns-login", {
+  const response = await axiosBase.post<APIResponse>("user/sns-login", {
     email: payload.email,
     token: payload.oAuthToken,
     sns: payload.oAuthType,

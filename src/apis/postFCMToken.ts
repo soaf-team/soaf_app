@@ -1,4 +1,4 @@
-import { axiosInstance } from "./axios";
+import { axiosBase } from "./axios";
 
 type Props = {
   userId: string;
@@ -11,7 +11,7 @@ export const postFCMToken = async ({
   deviceToken,
   deviceType,
 }: Props) => {
-  const response = await axiosInstance.post("/push/token", {
+  const response = await axiosBase.post("/push/token", {
     userId,
     deviceToken,
     deviceType,

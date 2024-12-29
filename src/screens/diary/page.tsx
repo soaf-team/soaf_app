@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Step1, Step2 } from './components';
+import { Step1, Step2, Step3 } from './components';
 import { useFunnel } from 'hooks';
 import { DiaryFormType } from 'types/diary';
 
@@ -16,7 +16,7 @@ export const Main = () => {
     isPublic: false,
   });
 
-  const { Funnel, nextStep, prevStep } = useFunnel(['step1', 'step2']);
+  const { Funnel, nextStep, prevStep } = useFunnel(['step1', 'step2', 'step3']);
 
   return (
     <Funnel>
@@ -44,6 +44,9 @@ export const Main = () => {
             }));
           }}
         />
+      </Funnel.Step>
+      <Funnel.Step name="step3">
+        <Step3 initialDiary={diary} onPrevious={prevStep} />
       </Funnel.Step>
     </Funnel>
   );

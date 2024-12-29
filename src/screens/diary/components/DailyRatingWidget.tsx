@@ -51,7 +51,12 @@ export const DailyRatingWidget = ({
             >
               <Image
                 source={level}
-                style={[styles.image, { opacity: isSelected ? 1 : 0.3 }]}
+                style={[
+                  styles.image,
+                  {
+                    opacity: selectedRating == null ? 1 : isSelected ? 1 : 0.3,
+                  },
+                ]}
                 resizeMode="contain"
               />
             </Animated.View>

@@ -4064,6 +4064,7 @@ __metadata:
     react-native-linear-gradient: "npm:^2.8.3"
     react-native-markdown-display: "npm:^7.0.2"
     react-native-paper: "npm:^5.12.5"
+    react-native-raw-bottom-sheet: "npm:^3.0.0"
     react-native-reanimated: "npm:^3.15.2"
     react-native-safe-area-context: "npm:^4.9.0"
     react-native-splash-screen: "npm:^3.3.0"
@@ -10431,6 +10432,13 @@ __metadata:
     react-native-safe-area-context: "*"
     react-native-vector-icons: "*"
   checksum: 10c0/feeeedae6fcd9684be04a8a9e9f568776d1680efa190cf0594d72fd91724985bbef2847e06e474ee6221dd1e236701e69c28f1e47f41cc0be8c99656ecf3f58c
+  languageName: node
+  linkType: hard
+
+"react-native-raw-bottom-sheet@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "react-native-raw-bottom-sheet@npm:3.0.0"
+  checksum: 10c0/dd4a702ba97132ebfb41d6dfae8bc08a838fff536e9301f158ca168fbdc62f7c462b354209c480a868cfaf380c5c47f4c7c980c413e939570f8e126811e691bf
   languageName: node
   linkType: hard
 

@@ -6,6 +6,8 @@ import UnlockBlackIcon from "./unlock-black.svg";
 import LockBlackIcon from "./lock-black.svg";
 import AlbumIcon from "./album.svg";
 import PlusIcon from "./plus.svg";
+import TriangleIcon from "./triangle.svg";
+import PrimaryCheckIcon from "./primary-check-icon.svg";
 
 export {
   XIcon,
@@ -16,6 +18,8 @@ export {
   UnlockBlackIcon,
   AlbumIcon,
   PlusIcon,
+  TriangleIcon,
+  PrimaryCheckIcon,
 };
 
 export * from "./header";

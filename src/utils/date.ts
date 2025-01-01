@@ -13,3 +13,10 @@ export const getDateStatus = (
     return "today";
   }
 };
+
+export const getYearMonthString = (date: Date) => {
+  return date.toLocaleString("default", {
+    year: "numeric",
+    month: "long",
+  });
+};

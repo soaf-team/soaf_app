@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
-import { Header, HeaderProps } from "./Header";
+import { Header, HeaderProps } from "./layouts";
 
 type ScreenLayoutProps = {
   children: React.ReactNode;

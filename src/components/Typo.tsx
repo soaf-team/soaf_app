@@ -3,7 +3,7 @@ import { StyleProp, Text, TextStyle } from "react-native";
 
 type Props = {
   children: React.ReactNode;
-  weight?: "regular" | "medium" | "bold";
+  weight?: "regular" | "medium" | "bold" | "semibold";
   size?: number;
   color?: string;
   style?: StyleProp<TextStyle>;
@@ -40,4 +40,5 @@ const PRETENDARD_FONT_FAMILY = {
   regular: "Pretendard-Regular",
   medium: "Pretendard-Medium",
   bold: "Pretendard-Bold",
+  semibold: "Pretendard-SemiBold",
 };

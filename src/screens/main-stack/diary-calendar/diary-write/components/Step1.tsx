@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import { PageLayout, Spacing } from 'components';
-import { StepBox } from './StepBox';
-import { DailyRatingWidget } from './DailyRatingWidget';
-import { MoodRating } from 'types/diary';
-import { XIcon } from 'assets';
+import { PageLayout, Spacing } from "components";
+import { StepBox } from "./StepBox";
+import { DailyRatingWidget } from "./DailyRatingWidget";
+import { MoodRating } from "types/diary";
+import { XIcon } from "assets";
 
 interface Step1Props {
   rating: MoodRating | null;
@@ -17,7 +17,7 @@ export const Step1 = ({ rating, onClose, onNext }: Step1Props) => {
     <PageLayout
       header={{
         leftSlot: {
-          component: '',
+          component: "",
         },
         rightSlot: {
           component: <XIcon onPress={onClose} />,

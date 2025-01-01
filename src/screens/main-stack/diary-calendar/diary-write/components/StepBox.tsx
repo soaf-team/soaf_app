@@ -1,6 +1,6 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from "react-native";
 
-import { token } from 'constants/token';
+import { token } from "constants/token";
 
 interface StepProps {
   currentStep: number;
@@ -28,23 +28,23 @@ export const StepBox = ({
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   stepText: {
     fontSize: 16,
     color: token.colors.gray300,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 6,
   },
   mainMessage: {
     fontSize: 22,
-    fontWeight: '700',
-    textAlign: 'center',
+    fontWeight: "700",
+    textAlign: "center",
   },
   subMessage: {
     fontSize: 14,
     color: token.colors.gray800,
-    textAlign: 'center',
+    textAlign: "center",
     paddingVertical: 8,
   },
 });

@@ -5,12 +5,12 @@ import {
   Text,
   Keyboard,
   Animated,
-} from 'react-native';
-import { useEffect, useRef } from 'react';
+} from "react-native";
+import { useEffect, useRef } from "react";
 
-import { token } from 'constants/token';
-import { DiaryFormType } from 'types/diary';
-import { LockBlackIcon, UnlockBlackIcon, AlbumIcon } from 'assets';
+import { token } from "constants/token";
+import { DiaryFormType } from "types/diary";
+import { LockBlackIcon, UnlockBlackIcon, AlbumIcon } from "assets";
 
 interface AboveKeyboardBarProps {
   diary: DiaryFormType;
@@ -26,7 +26,7 @@ export const AboveKeyboardBar = ({
   const bottomPadding = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    const keyboardDidShow = Keyboard.addListener('keyboardWillShow', (e) => {
+    const keyboardDidShow = Keyboard.addListener("keyboardWillShow", (e) => {
       Animated.timing(bottomPadding, {
         toValue: 0,
         duration: e.duration,
@@ -34,7 +34,7 @@ export const AboveKeyboardBar = ({
       }).start();
     });
 
-    const keyboardDidHide = Keyboard.addListener('keyboardWillHide', (e) => {
+    const keyboardDidHide = Keyboard.addListener("keyboardWillHide", (e) => {
       Animated.timing(bottomPadding, {
         toValue: 34, // 일반적인 iOS 하단 안전영역 높이
         duration: e.duration,
@@ -92,10 +92,10 @@ export const AboveKeyboardBar = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderTopWidth: 1,
     borderTopColor: token.colors.gray300,
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
@@ -106,18 +106,18 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   leftSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 16,
   },
   rightSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 16,
   },
   countText: {
@@ -125,11 +125,11 @@ const styles = StyleSheet.create({
     color: token.colors.gray300,
   },
   countTextWarning: {
-    color: '#ff3c3c',
+    color: "#ff3c3c",
   },
   saveButton: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     color: token.colors.gray800,
   },
 });

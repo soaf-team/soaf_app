@@ -1,14 +1,14 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import { EmotionButtonList, PageLayout, Spacing } from 'components';
-import { Button } from 'components/ui';
-import { StepBox } from './StepBox';
-import { DiaryFormType } from 'types/diary';
-import { EmotionKey } from 'types/emotion';
-import { ArrowIcon, XIcon } from 'assets';
+import { EmotionButtonList, PageLayout, Spacing } from "components";
+import { Button } from "components/ui";
+import { StepBox } from "./StepBox";
+import { DiaryFormType } from "types/diary";
+import { EmotionKey } from "types/emotion";
+import { ArrowIcon, XIcon } from "assets";
 
 const STEP_MAIN_MESSAGE = `좀 더 구체적인\n감정을 선택해주세요.`;
-const STEP_SUB_MESSAGE = '가장 먼저 선택한 감정이 일기 캘린더에 표시돼요.';
+const STEP_SUB_MESSAGE = "가장 먼저 선택한 감정이 일기 캘린더에 표시돼요.";
 
 interface Step2Props {
   diary: DiaryFormType;

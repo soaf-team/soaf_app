@@ -12,11 +12,13 @@ import { getDateStatus } from "utils";
 
 import { Calendar, EmotionSticker, YearMonthSelector } from "components/diary";
 import { PageLayout, Typo } from "components";
+import { LINK } from "constants/link";
+import { MainStackNavigationType } from "types/navigation";
 
 export const DiaryCalendarScreen = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDiary, setSelectedDiary] = useState<DiaryType | null>(null);
-  const navigation = useNavigation();
+  const navigation = useNavigation<MainStackNavigationType>();
 
   const { currentUserDiaryList } = useMyDiaryListQuery(
     dayjs().year(),
@@ -33,7 +35,9 @@ export const DiaryCalendarScreen = () => {
     }
     if (isFuture || diaryAtDate) return;
 
-    // 일기 작성 페이지로 이동
+    navigation.navigate(LINK.main.diaryCalendar.write, {
+      date,
+    });
   };
 
   return (

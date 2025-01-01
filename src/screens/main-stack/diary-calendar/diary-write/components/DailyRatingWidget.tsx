@@ -1,8 +1,8 @@
-import React from 'react';
-import { View, Image, StyleSheet, Animated, Pressable } from 'react-native';
+import React from "react";
+import { View, Image, StyleSheet, Animated, Pressable } from "react-native";
 
-import { MOOD_RATING_ARRAY } from 'constants/mood';
-import { MoodRating } from 'types/diary';
+import { MOOD_RATING_ARRAY } from "constants/mood";
+import { MoodRating } from "types/diary";
 
 type DailyRatingWidgetProps = {
   selectedRating: MoodRating | null;
@@ -69,19 +69,19 @@ export const DailyRatingWidget = ({
 
 const styles = StyleSheet.create({
   container: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
     gap: 12,
   },
   imageContainer: {
     width: 50,
     height: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   image: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
 });

@@ -1,18 +1,23 @@
-import { View, Text, ScrollView, StyleSheet, Pressable } from "react-native";
+import React, { useCallback, useRef } from "react";
+import { ScrollView, StyleSheet } from "react-native";
+import styled from "@emotion/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import LinearGradient from "react-native-linear-gradient";
-import React, { useRef } from "react";
-import { getYearMonthString } from "utils";
-import { token } from "constants/token";
-import RBSheet from "react-native-raw-bottom-sheet";
-import { PrimaryCheckIcon, TriangleIcon } from "assets";
-import { Typo } from "components/Typo";
 
-type RBSheetRef = {
-  open: () => void;
-  close: () => void;
-};
+import { getYearMonthString } from "utils";
+import { PrimaryCheckIcon, TriangleIcon } from "assets";
+import { token } from "constants/token";
+
+import { Typo } from "components/Typo";
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetView,
+  SCREEN_HEIGHT,
+} from "@gorhom/bottom-sheet";
 
 const YEAR_MONTH_LIST_LENGTH = 36;
+const HEADER_TITLE = "월 선택하기";
 
 type YearMonthSelectProps = {
   currentDate: Date;
@@ -23,9 +28,7 @@ export const YearMonthSelector = ({
   currentDate,
   handleCurrentDate,
 }: YearMonthSelectProps) => {
-  const refRBSheet = useRef<RBSheetRef>(null);
-
-  console.log(refRBSheet);
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
   const yearMonthArray = Array.from(
     { length: YEAR_MONTH_LIST_LENGTH },
@@ -34,126 +37,163 @@ export const YearMonthSelector = ({
       return new Date(today.getFullYear(), today.getMonth() - i);
     }
   );
-  const selectedIndex = yearMonthArray.findIndex(
-    (date) => getYearMonthString(date) === getYearMonthString(currentDate)
-  );
+
   const currentYearMonth = getYearMonthString(currentDate);
+
+  const handlePresentModalPress = useCallback(() => {
+    bottomSheetModalRef.current?.present();
+  }, []);
 
   return (
     <>
-      <Pressable
-        style={styles.container}
-        onPress={() => {
-          refRBSheet.current?.open();
-        }}
-      >
-        <Typo size={18} weight="medium">
+      <YearMonthSelectorButton onPress={handlePresentModalPress}>
+        <Typo size={18} weight="semibold">
           {currentDate.getFullYear()}.
           {currentDate.getMonth() + 1 < 10
             ? `0${currentDate.getMonth() + 1}`
             : `${currentDate.getMonth() + 1}`}
         </Typo>
         <TriangleIcon />
-      </Pressable>
-      <RBSheet
-        ref={refRBSheet}
-        // useNativeDriver={true}
-        customModalProps={{
-          animationType: "slide",
-          statusBarTranslucent: true,
-        }}
-        customStyles={{
-          draggableIcon: {
-            backgroundColor: token.colors.gray200,
-          },
-          container: {
-            borderTopRightRadius: 12,
-            borderTopLeftRadius: 12,
-            paddingTop: 24,
-            height: "auto",
-          },
-        }}
-      >
-        <View style={styles.drawerContainer}>
-          <Text style={styles.title}>월 선택하기</Text>
-          <View style={styles.scrollContainer}>
-            <ScrollView
-              contentContainerStyle={styles.scrollContent}
-              showsVerticalScrollIndicator={false}
-            >
-              {yearMonthArray.map((yearMonth, i) => {
-                const thisYearMonth = getYearMonthString(yearMonth);
-                const isSelected = currentYearMonth === thisYearMonth;
+      </YearMonthSelectorButton>
 
-                return (
-                  <Pressable
-                    onPress={() => {
-                      handleCurrentDate(yearMonth);
-                      refRBSheet.current?.close();
-                    }}
-                    style={styles.yearMonthButton}
-                    key={i}
-                  >
-                    <Text
-                      style={[
-                        styles.yearMonthText,
-                        isSelected && styles.selectedYearMonthText,
-                      ]}
-                    >
-                      {yearMonth.toLocaleString("default", {
-                        year: "numeric",
-                        month: "long",
-                      })}
-                    </Text>
-                    {isSelected && (
-                      <View style={styles.checkIconContainer}>
-                        <PrimaryCheckIcon />
-                      </View>
-                    )}
-                  </Pressable>
-                );
-              })}
-            </ScrollView>
-            <LinearGradient
-              colors={["transparent", "white"]}
-              style={styles.gradient}
-              pointerEvents="none"
-            />
-          </View>
-        </View>
-      </RBSheet>
+      <YearMonthSelectModal
+        bottomSheetModalRef={bottomSheetModalRef}
+        yearMonthArray={yearMonthArray}
+        currentYearMonth={currentYearMonth}
+        handleCurrentDate={handleCurrentDate}
+      />
     </>
   );
 };
 
+type YearMonthSelectModalProps = {
+  bottomSheetModalRef: React.RefObject<BottomSheetModal>;
+  yearMonthArray: Date[];
+  currentYearMonth: string;
+  handleCurrentDate: (newDate: Date) => void;
+};
+
+const YearMonthSelectModal = ({
+  bottomSheetModalRef,
+  yearMonthArray,
+  currentYearMonth,
+  handleCurrentDate,
+}: YearMonthSelectModalProps) => {
+  const { top, bottom } = useSafeAreaInsets();
+
+  return (
+    <BottomSheetModal
+      ref={bottomSheetModalRef}
+      backgroundStyle={{ backgroundColor: token.colors.white }}
+      backdropComponent={(props) => (
+        <BottomSheetBackdrop
+          {...props}
+          disappearsOnIndex={-1}
+          appearsOnIndex={0}
+          opacity={0.6}
+        />
+      )}
+      handleIndicatorStyle={{
+        backgroundColor: token.colors.gray200,
+        width: 40,
+        height: 3,
+      }}
+    >
+      <ModalContainer>
+        <Typo size={18} weight="semibold">
+          {HEADER_TITLE}
+        </Typo>
+        <ScrollView
+          style={[
+            styles.scrollContainer,
+            {
+              height: SCREEN_HEIGHT / 2 - top - bottom,
+            },
+          ]}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {yearMonthArray.map((yearMonth, i) => {
+            const thisYearMonth = getYearMonthString(yearMonth);
+            const isSelected = currentYearMonth === thisYearMonth;
+
+            return (
+              <YearMonthButton
+                onPress={() => {
+                  handleCurrentDate(yearMonth);
+                  bottomSheetModalRef.current?.close();
+                }}
+                key={i}
+              >
+                <Typo
+                  size={16}
+                  weight={isSelected ? "bold" : "regular"}
+                  color={isSelected ? token.colors.primary : token.colors.black}
+                >
+                  {yearMonth.toLocaleString("ko-KR", {
+                    year: "numeric",
+                    month: "long",
+                  })}
+                </Typo>
+                {isSelected && (
+                  <CheckIconContainer>
+                    <PrimaryCheckIcon />
+                  </CheckIconContainer>
+                )}
+              </YearMonthButton>
+            );
+          })}
+        </ScrollView>
+        <GradientContainer
+          colors={["rgba(255, 255, 255, 0)", "rgba(255, 255, 255, 1)"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          locations={[0, 0.5]}
+          pointerEvents="none"
+        />
+      </ModalContainer>
+    </BottomSheetModal>
+  );
+};
+
+const YearMonthSelectorButton = styled.Pressable`
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 28px;
+`;
+
+const ModalContainer = styled(BottomSheetView)`
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 12px;
+  padding-top: 13px;
+`;
+
+const YearMonthButton = styled.Pressable`
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 28px;
+`;
+
+const CheckIconContainer = styled.View`
+  position: absolute;
+  right: -30px;
+`;
+
+const GradientContainer = styled(LinearGradient)`
+  position: absolute;
+  bottom: 0;
+  height: 80px;
+  width: 100%;
+`;
+
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 4,
-    height: 28,
-  },
-  dateText: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  triangleIcon: {
-    width: 8,
-    height: 5,
-  },
-  drawerContainer: {
-    flexDirection: "column",
-    alignItems: "center",
-    gap: 16,
-    paddingBottom: 12,
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: "500",
-  },
   scrollContainer: {
-    height: 330,
     width: "100%",
     position: "relative",
   },
@@ -161,32 +201,5 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     alignItems: "center",
     gap: 16,
-  },
-  yearMonthButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 8,
-    position: "relative",
-  },
-  yearMonthText: {
-    fontSize: 16,
-    lineHeight: 24,
-  },
-  selectedYearMonthText: {
-    color: token.colors.primary,
-    fontWeight: "bold",
-    fontSize: 18,
-    lineHeight: 28,
-  },
-  checkIconContainer: {
-    position: "absolute",
-    right: -30,
-  },
-  gradient: {
-    position: "absolute",
-    bottom: 38,
-    height: 50,
-    width: "100%",
   },
 });

@@ -15,7 +15,7 @@ export const getDateStatus = (
 };
 
 export const getYearMonthString = (date: Date) => {
-  return date.toLocaleString("default", {
+  return date.toLocaleString("ko-KR", {
     year: "numeric",
     month: "long",
   });

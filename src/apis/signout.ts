@@ -1,6 +1,6 @@
-import { axiosInstance } from "./axios";
+import { axiosBase } from "./axios";
 
 export const signOut = async () => {
-  const response = await axiosInstance.delete("/user/delete");
+  const response = await axiosBase.delete("/user/delete");
   return response.data.data;
 };

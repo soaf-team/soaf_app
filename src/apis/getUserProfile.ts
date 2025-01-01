@@ -1,6 +1,6 @@
-import { axiosInstance } from "./axios";
+import { axiosBase } from "./axios";
 
 export const getUserProfile = async () => {
-  const response = await axiosInstance.get("/user/profile");
+  const response = await axiosBase.get("/user/profile");
   return response.data.data;
 };

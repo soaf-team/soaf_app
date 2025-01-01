@@ -5,7 +5,7 @@ import { AuthContext } from "providers/AuthContextProvider";
 import React, { useContext, useState } from "react";
 import { Image, Platform, StyleSheet, View } from "react-native";
 import NaverLogin from "@react-native-seoul/naver-login";
-import { axiosInstance, login } from "apis";
+import { axiosBase, login } from "apis";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationType } from "types/navigation";
 import { setTokenToStorage } from "utils";
@@ -178,8 +178,8 @@ export const LoginScreen = () => {
         setIsLoading(false);
         return;
       } else if (resultCase === "login") {
-        axiosInstance.defaults.headers["x-access-token"] = accessToken!;
-        axiosInstance.defaults.headers["x-refresh-token"] = refreshToken!;
+        axiosBase.defaults.headers["x-access-token"] = accessToken!;
+        axiosBase.defaults.headers["x-refresh-token"] = refreshToken!;
 
         const userInfo = await getUserProfile();
         const userId = userInfo.id;

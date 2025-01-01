@@ -28,6 +28,9 @@ export type PublicStackParamList = {
 export type MainStackParamList = {
   [LINK.main.index]: undefined;
   [LINK.main.diaryCalendar.index]: undefined;
+  [LINK.main.diaryCalendar.write]: {
+    date: string;
+  };
   [LINK.main.diaryStatistics.index]: undefined;
   [LINK.main.soafExplore.index]: undefined;
   [LINK.main.chat.index]: undefined;

@@ -1,17 +1,22 @@
-import { ListIcon, PlusIcon } from "assets";
-import { PageLayout, Typo } from "components";
-import { Calendar, EmotionSticker, YearMonthSelector } from "components/diary";
-import { token } from "constants/token";
+import styled from "@emotion/native";
+import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
-import { useMyDiaryListQuery } from "hooks/queries";
 import { useState } from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import { View } from "react-native";
+
+import { ListIcon, PlusIcon } from "assets";
+import { token } from "constants/token";
+import { useMyDiaryListQuery } from "hooks/queries";
 import { DiaryType } from "types";
 import { getDateStatus } from "utils";
+
+import { Calendar, EmotionSticker, YearMonthSelector } from "components/diary";
+import { PageLayout, Typo } from "components";
 
 export const DiaryCalendarScreen = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDiary, setSelectedDiary] = useState<DiaryType | null>(null);
+  const navigation = useNavigation();
 
   const { currentUserDiaryList } = useMyDiaryListQuery(
     dayjs().year(),
@@ -58,26 +63,18 @@ export const DiaryCalendarScreen = () => {
           if (day == null) return <View key={index} />;
 
           return (
-            <View key={index} style={styles.dayContainer}>
-              <View
-                style={[
-                  styles.dayText,
-                  {
-                    backgroundColor: isToday
-                      ? token.colors.gray600
-                      : "transparent",
-                  },
-                ]}
-              >
+            <DayContainer>
+              <DayTextWrapper isToday={isToday}>
                 <Typo
                   size={12}
                   color={isToday ? token.colors.white : token.colors.gray300}
                 >
                   {day?.getDate()}
                 </Typo>
-              </View>
-              <Pressable
+              </DayTextWrapper>
+              <DayCircle
                 key={index}
+                isFuture={isFuture}
                 onPress={() =>
                   handleDateClick(
                     diaryAtDate,
@@ -85,22 +82,14 @@ export const DiaryCalendarScreen = () => {
                     dayjs(day).format("YYYY-MM-DD")
                   )
                 }
-                style={[
-                  styles.circle,
-                  {
-                    backgroundColor: isFuture
-                      ? "rgba(240, 241, 244, 0.4)"
-                      : token.colors.gray50,
-                  },
-                ]}
                 disabled={isFuture}
               >
                 {diaryMainEmotion && (
                   <EmotionSticker emotion={diaryAtDate?.emotions[0]} />
                 )}
                 {isToday && !diaryMainEmotion && <PlusIcon />}
-              </Pressable>
-            </View>
+              </DayCircle>
+            </DayContainer>
           );
         }}
       />
@@ -108,26 +97,34 @@ export const DiaryCalendarScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  dayContainer: {
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "flex-end",
-    gap: 5,
-    paddingVertical: 8,
-  },
-  dayText: {
-    width: 30,
-    height: 17,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 999,
-  },
-  circle: {
-    height: 40,
-    width: 40,
-    borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
+const DayContainer = styled.View`
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+  padding-vertical: 8px;
+`;
+
+const DayTextWrapper = styled.View<{
+  isToday: boolean;
+}>`
+  width: 30px;
+  height: 17px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 999px;
+  background-color: ${({ isToday }) =>
+    isToday ? token.colors.gray600 : "transparent"};
+`;
+
+const DayCircle = styled.Pressable<{
+  isFuture: boolean;
+}>`
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  align-items: center;
+  justify-content: center;
+  background-color: ${({ isFuture }) =>
+    isFuture ? "rgba(240, 241, 244, 0.4)" : token.colors.gray50};
+`;

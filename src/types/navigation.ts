@@ -31,6 +31,9 @@ export type MainStackParamList = {
   [LINK.main.diaryCalendar.write]: {
     date: string;
   };
+  [LINK.main.diaryCalendar.list]: {
+    date: string;
+  };
   [LINK.main.diaryStatistics.index]: undefined;
   [LINK.main.soafExplore.index]: undefined;
   [LINK.main.chat.index]: undefined;

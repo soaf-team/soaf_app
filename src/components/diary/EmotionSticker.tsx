@@ -1,12 +1,35 @@
 import { EmotionKey } from "types";
-import { StyleSheet, View, ViewStyle } from "react-native";
-import { EMOTIONS } from "constants/emotion";
+import { View, ViewStyle } from "react-native";
+import * as EmotionIcons from "assets/emotion";
+
+type SizeType = "sm" | "md" | "lg";
 
 interface Props {
   emotion: EmotionKey;
-  size?: "sm" | "md" | "lg";
+  size?: SizeType;
   style?: ViewStyle;
 }
+
+const STICKER_SIZES: Record<SizeType, { width: number; height: number }> = {
+  sm: { width: 16, height: 16 },
+  md: { width: 32, height: 32 },
+  lg: { width: 42, height: 42 },
+};
+
+const EMOTION_MAPPING: Record<EmotionKey, keyof typeof EmotionIcons> = {
+  happy: "Happy",
+  good: "Pleased",
+  joyful: "Funny",
+  excited: "Flutter",
+  proud: "Proud",
+  calm: "Comfortable",
+  tired: "Tired",
+  lonely: "Lonely",
+  sad: "Sad",
+  down: "Gloomy",
+  worried: "Anxious",
+  angry: "Angry",
+};
 
 export const EmotionSticker = ({
   emotion,
@@ -14,22 +37,12 @@ export const EmotionSticker = ({
   style,
   ...props
 }: Props) => {
-  const stickerSize = {
-    sm: { width: 16, height: 16 },
-    md: { width: 32, height: 32 },
-    lg: { width: 42, height: 42 },
-  }[size];
+  const { width, height } = STICKER_SIZES[size];
+  const EmotionIcon = EmotionIcons[EMOTION_MAPPING[emotion]];
 
   return (
-    <View style={[stickerSize, style]} {...props}>
-      {EMOTIONS[emotion]?.icon}
+    <View style={[{ width, height }, style]} {...props}>
+      <EmotionIcon width={width} height={height} />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  image: {
-    width: "100%",
-    height: "100%",
-  },
-});

@@ -84,7 +84,11 @@ const YearMonthSelectModal = ({
   return (
     <BottomSheetModal
       ref={bottomSheetModalRef}
-      backgroundStyle={{ backgroundColor: token.colors.white }}
+      backgroundStyle={{
+        backgroundColor: token.colors.white,
+        borderTopLeftRadius: 28,
+        borderTopRightRadius: 28,
+      }}
       backdropComponent={(props) => (
         <BottomSheetBackdrop
           {...props}
@@ -170,6 +174,8 @@ const ModalContainer = styled(BottomSheetView)`
   gap: 16px;
   padding-bottom: 12px;
   padding-top: 13px;
+  border-top-left-radius: 28px;
+  border-top-right-radius: 28px;
 `;
 
 const YearMonthButton = styled.Pressable`

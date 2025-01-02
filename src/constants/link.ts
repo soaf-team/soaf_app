@@ -20,6 +20,8 @@ export const LINK = {
     diaryCalendar: {
       index: "diary-calendar",
       write: "diary-write",
+      list: "my-diary-list",
+      detail: "diary-detail",
     },
     diaryStatistics: {
       index: "diary-statistics",

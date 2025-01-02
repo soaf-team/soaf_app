@@ -1,3 +1,4 @@
+import { axiosBase } from "apis";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "constants/key";
 import React, { createContext, useEffect, useState } from "react";
 import { getAsyncStorage, removeAsyncStorage } from "utils";
@@ -36,6 +37,8 @@ export const AuthContextProvider = ({
 
       if (!accessToken || !refreshToken) return;
 
+      axiosBase.defaults.headers["x-access-token"] = accessToken;
+      axiosBase.defaults.headers["x-refresh-token"] = refreshToken;
       setIsValidUser(true);
     } catch (error) {
       console.error("error", error);

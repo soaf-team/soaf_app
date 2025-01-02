@@ -1,14 +1,14 @@
 import React from "react";
-import { StyleProp, Text, TextStyle } from "react-native";
+import { StyleProp, Text, TextProps, TextStyle } from "react-native";
 
 type Props = {
   children: React.ReactNode;
-  weight?: "regular" | "medium" | "bold" | "semibold";
+  weight?: "regular" | "medium" | "semibold" | "bold" | "black";
   size?: number;
   color?: string;
   style?: StyleProp<TextStyle>;
   align?: "left" | "center" | "right";
-};
+} & TextProps;
 
 export const Typo = ({
   children,
@@ -17,6 +17,7 @@ export const Typo = ({
   color = "#121212",
   style,
   align,
+  ...props
 }: Props) => {
   return (
     <Text
@@ -30,6 +31,7 @@ export const Typo = ({
         },
         style,
       ]}
+      {...props}
     >
       {children}
     </Text>
@@ -39,6 +41,7 @@ export const Typo = ({
 const PRETENDARD_FONT_FAMILY = {
   regular: "Pretendard-Regular",
   medium: "Pretendard-Medium",
-  bold: "Pretendard-Bold",
   semibold: "Pretendard-SemiBold",
+  bold: "Pretendard-Bold",
+  black: "Pretendard-Black",
 };

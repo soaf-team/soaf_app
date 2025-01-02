@@ -8,6 +8,8 @@ import AlbumIcon from "./album.svg";
 import PlusIcon from "./plus.svg";
 import TriangleIcon from "./triangle.svg";
 import PrimaryCheckIcon from "./primary-check-icon.svg";
+import CheckIcon from "./check-active.svg";
+import CheckInactiveIcon from "./check-inactive.svg";
 
 export {
   XIcon,
@@ -20,6 +22,8 @@ export {
   PlusIcon,
   TriangleIcon,
   PrimaryCheckIcon,
+  CheckIcon,
+  CheckInactiveIcon,
 };
 
 export * from "./header";

@@ -1,7 +1,7 @@
 import styled from "@emotion/native";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { View } from "react-native";
 
 import { ListIcon, PlusIcon } from "assets";
@@ -14,15 +14,18 @@ import { Calendar, EmotionSticker, YearMonthSelector } from "components/diary";
 import { PageLayout, Typo } from "components";
 import { LINK } from "constants/link";
 import { MainStackNavigationType } from "types/navigation";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { DiaryDetailModal } from "./diary-detail";
 
 export const DiaryCalendarScreen = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDiary, setSelectedDiary] = useState<DiaryType | null>(null);
   const navigation = useNavigation<MainStackNavigationType>();
+  const diaryDetailModalRef = useRef<BottomSheetModal>(null);
 
   const { currentUserDiaryList } = useMyDiaryListQuery(
-    dayjs().year(),
-    dayjs().month() + 1
+    currentDate.getFullYear(),
+    currentDate.getMonth() + 1
   );
 
   const handleDateClick = (
@@ -32,6 +35,11 @@ export const DiaryCalendarScreen = () => {
   ) => {
     if (diaryAtDate) {
       setSelectedDiary(diaryAtDate);
+
+      setTimeout(() => {
+        diaryDetailModalRef.current?.present();
+      }, 100);
+      return;
     }
     if (isFuture || diaryAtDate) return;
 
@@ -40,12 +48,27 @@ export const DiaryCalendarScreen = () => {
     });
   };
 
+  const handleSnapToIndex = (index: number) => {
+    if (index === 1) {
+      setSelectedDiary(null);
+      navigation.navigate(LINK.main.diaryCalendar.write, {
+        date: selectedDiary?.date,
+      });
+    }
+  };
+
+  const handleListClick = () => {
+    navigation.navigate(LINK.main.diaryCalendar.list, {
+      date: dayjs(currentDate).format("YYYY-MM-DD"),
+    });
+  };
+
   return (
     <PageLayout
       header={{
         leftSlot: null,
         rightSlot: {
-          component: <ListIcon />,
+          component: <ListIcon onPress={handleListClick} />,
         },
       }}
       style={{ gap: 22 }}
@@ -96,6 +119,12 @@ export const DiaryCalendarScreen = () => {
             </DayContainer>
           );
         }}
+      />
+
+      <DiaryDetailModal
+        bottomSheetModalRef={diaryDetailModalRef}
+        diary={selectedDiary}
+        onSnapToIndex={handleSnapToIndex}
       />
     </PageLayout>
   );

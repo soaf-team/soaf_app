@@ -7,7 +7,7 @@ import {
 import { MainStackParamList } from "types/navigation";
 import { BottomTab } from "./BottomTab";
 import { LINK } from "constants/link";
-import { DiaryWriteScreen } from "./diary-calendar";
+import { DiaryWriteScreen, MyDiaryList } from "./diary-calendar";
 
 const Stack = createStackNavigator<MainStackParamList>();
 
@@ -23,6 +23,10 @@ export const MainStack: React.FC = () => {
       <Stack.Screen
         name={LINK.main.diaryCalendar.write}
         component={DiaryWriteScreen}
+      />
+      <Stack.Screen
+        name={LINK.main.diaryCalendar.list}
+        component={MyDiaryList}
       />
     </Stack.Navigator>
   );

@@ -3,18 +3,17 @@ import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
 import { useRef, useState } from "react";
 import { View } from "react-native";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 
 import { ListIcon, PlusIcon } from "assets";
 import { token } from "constants/token";
 import { useMyDiaryListQuery } from "hooks/queries";
-import { DiaryType } from "types";
+import { DiaryType, MainStackNavigationType } from "types";
 import { getDateStatus } from "utils";
 
 import { Calendar, EmotionSticker, YearMonthSelector } from "components/diary";
 import { PageLayout, Typo } from "components";
 import { LINK } from "constants/link";
-import { MainStackNavigationType } from "types/navigation";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { DiaryDetailModal } from "./diary-detail";
 
 export const DiaryCalendarScreen = () => {
@@ -51,8 +50,8 @@ export const DiaryCalendarScreen = () => {
   const handleSnapToIndex = (index: number) => {
     if (index === 1) {
       setSelectedDiary(null);
-      navigation.navigate(LINK.main.diaryCalendar.write, {
-        date: selectedDiary?.date,
+      navigation.navigate(LINK.main.diaryCalendar.detail, {
+        diaryId: selectedDiary?.id,
       });
     }
   };

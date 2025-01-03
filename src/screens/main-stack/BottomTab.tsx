@@ -1,14 +1,18 @@
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import {
+  BottomTabBarProps,
+  createBottomTabNavigator,
+} from "@react-navigation/bottom-tabs";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Image, Platform, StyleSheet, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 import { LINK } from "constants/link";
 
-import { DiaryCalendarScreen } from "screens/main-stack/diary-calendar/DiaryCalendar";
-import { DiaryStaticsScreen } from "screens/main-stack/diary-statics/DiaryStatics";
-import { SoafExploreScreen } from "screens/main-stack/explore/SoafExplore";
-import { ChatScreen } from "screens/main-stack/chat/Chat";
-import { MyHomeScreen } from "screens/main-stack/my-home/MyHome";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { DiaryCalendarScreen } from "./diary-calendar";
+import { DiaryStaticsScreen } from "./diary-statics";
+import { SoafExploreScreen } from "./explore";
+import { ChatScreen } from "./chat";
+import { MyHomeScreen } from "./my-home";
 
 const mainRoutes = [
   {
@@ -54,7 +58,7 @@ export const BottomTab = () => {
       screenOptions={{
         headerShown: false,
       }}
-      tabBar={(props) => (
+      tabBar={(props: BottomTabBarProps) => (
         <View
           style={[
             styles.tabBar,
@@ -63,7 +67,7 @@ export const BottomTab = () => {
             },
           ]}
         >
-          {props.state.routes.map((route, index) => {
+          {props.state.routes.map((route: any, index: number) => {
             const isFocused = props.state.index === index;
 
             return (

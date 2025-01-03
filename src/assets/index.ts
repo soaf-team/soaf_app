@@ -27,3 +27,4 @@ export {
 };
 
 export * from "./header";
+export * from "./emoji";

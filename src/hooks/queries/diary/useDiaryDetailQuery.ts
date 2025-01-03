@@ -1,6 +1,6 @@
 import { axiosBase } from "apis";
 import { transformDiaryKey } from "models";
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { QUERY_KEY } from "constants";
 
 const DEFAULT_DIARY = {
@@ -25,7 +25,7 @@ export const useDiaryDetailQuery = (id: string) => {
     data: diary = DEFAULT_DIARY,
     isLoading,
     isError,
-  } = useQuery({
+  } = useSuspenseQuery({
     queryKey: [QUERY_KEY.diaryDetail, id],
     queryFn: () => getDiaryDetail(id),
   });

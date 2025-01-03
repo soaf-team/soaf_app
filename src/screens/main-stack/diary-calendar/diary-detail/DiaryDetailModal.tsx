@@ -4,11 +4,13 @@ import {
   BottomSheetModal,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
-import { LockIcon, UnlockIcon } from "assets";
-import { Typo } from "components";
-import { EmotionSticker } from "components/diary";
 import { token } from "constants/token";
 import { DiaryType } from "types";
+import { DiaryDetailHeader } from "./DiaryDetailHeader";
+import { Pressable } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { LINK } from "constants/link";
+import { MainStackNavigationType } from "types/navigation";
 
 type DiaryDetailModalProps = {
   bottomSheetModalRef: React.RefObject<BottomSheetModal>;
@@ -23,13 +25,7 @@ export const DiaryDetailModal = ({
 }: DiaryDetailModalProps) => {
   if (!diary) return null;
 
-  const monthDay = new Date(diary.date).toLocaleDateString("ko-KR", {
-    month: "short",
-    day: "numeric",
-  });
-  const week = new Date(diary.date).toLocaleDateString("ko-KR", {
-    weekday: "long",
-  });
+  const navigation = useNavigation<MainStackNavigationType>();
 
   return (
     <BottomSheetModal
@@ -64,37 +60,23 @@ export const DiaryDetailModal = ({
       }}
     >
       <ModalContainer>
-        <EmotionSticker emotion={diary.emotions[0]} />
-        <TitleArea>
-          <Typo size={22} weight="bold" color={token.colors.gray300}>
-            {monthDay} {week}
-          </Typo>
-          {diary.isPublic ? <UnlockIcon /> : <LockIcon />}
-        </TitleArea>
-        <Typo
-          size={22}
-          weight="bold"
-          color={token.colors.black}
-          numberOfLines={1}
-          ellipsizeMode="tail"
+        <Pressable
+          onPress={() => {
+            bottomSheetModalRef.current?.dismiss();
+            navigation.navigate(LINK.main.diaryCalendar.detail, {
+              diaryId: diary.id,
+            });
+          }}
         >
-          {diary.title}
-        </Typo>
+          <DiaryDetailHeader diary={diary} />
+        </Pressable>
       </ModalContainer>
     </BottomSheetModal>
   );
 };
 
 const ModalContainer = styled(BottomSheetView)`
-  flex-direction: column;
-  gap: 8px;
   padding-bottom: 12px;
   padding-top: 13px;
   height: 210px;
-`;
-
-const TitleArea = styled.View`
-  flex-direction: row;
-  align-items: center;
-  gap: 6px;
 `;

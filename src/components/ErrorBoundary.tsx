@@ -17,7 +17,7 @@ export type RenderFallbackProps<ErrorType extends Error = Error> = {
   reset: () => void;
 };
 
-type RenderFallbackType = <ErrorType extends Error>(
+export type RenderFallbackType = <ErrorType extends Error>(
   props: RenderFallbackProps<ErrorType>
 ) => ReactNode;
 type IgnoreErrorType = <ErrorType extends Error = Error>(

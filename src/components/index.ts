@@ -1,3 +1,4 @@
+export * from "./AsyncBoundary";
 export * from "./PrimaryButton";
 export * from "./Typo";
 export * from "./ErrorBoundary";
